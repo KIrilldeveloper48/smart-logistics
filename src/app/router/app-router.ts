@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
-import App from '@/app/app.component';
 import { RootLayout } from '@/app/router/root-layout.component';
+import { AuctionsListPage } from '@/pages/auctions-list';
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -9,7 +9,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: App,
+  component: AuctionsListPage,
 });
 
 const routeTree = rootRoute.addChildren([indexRoute]);

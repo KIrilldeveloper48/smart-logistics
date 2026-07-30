@@ -6,6 +6,6 @@ describe('ApplicationProviders', () => {
   it('renders the index route', async () => {
     render(<ApplicationProviders />);
 
-    expect(await screen.findByRole('heading', { name: 'Get started' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Аукционы' })).toBeInTheDocument();
   });
 });
