@@ -18,4 +18,10 @@ export default tseslint.config(
       prettierConfig,
     ],
   },
+  {
+    files: ['src/components/ui/*.component.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 );
