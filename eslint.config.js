@@ -19,7 +19,7 @@ export default tseslint.config(
     ],
   },
   {
-    files: ['src/components/ui/*.component.tsx'],
+    files: ['src/shared/ui/*.component.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
