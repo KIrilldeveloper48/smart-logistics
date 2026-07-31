@@ -161,6 +161,25 @@ const createAuctionSeeds = (): TAuctionMockRecord[] => [
     bets: {
       bets: [
         {
+          id: 41,
+          created_at: '2026-05-25T16:04:00',
+          auction_id: 1236,
+          subscriber_id: 18,
+          contact_name: 'Пётр Петров',
+          contact_phone: '+79007654321',
+          price_with_vat: 30_000,
+          price_no_vat: 25_000,
+          organization_id: 19,
+          organization_inn: '5900000000',
+          organization_name: 'ООО Отменённая ставка',
+          is_rejected: true,
+          is_counter: false,
+          place: null,
+          is_win: false,
+          run_number: 0,
+          cancel_reason: 'Ставка отменена перевозчиком',
+        },
+        {
           id: 42,
           created_at: '2026-05-25T16:05:00',
           auction_id: 1236,

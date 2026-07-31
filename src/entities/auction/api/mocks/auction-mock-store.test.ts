@@ -8,7 +8,7 @@ describe('auction mock store', () => {
     expect(store.getAuctions()).toHaveLength(2);
     expect(store.getCities()).toEqual(['Пермь', 'Москва', 'Казань', 'Екатеринбург']);
     expect(store.getAuctionByUuid('550e8400-e29b-41d4-a716-446655440001')?.bets.bets).toHaveLength(
-      1,
+      2,
     );
   });
 

@@ -3,3 +3,4 @@ export * from './auction-detail.schemas';
 export * from './auction-list-request.mapper';
 export * from './auction-list.schemas';
 export * from './mocks/auction-mock-store';
+export * from './mocks/auction-read.handlers';
