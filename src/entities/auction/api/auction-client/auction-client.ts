@@ -27,7 +27,7 @@ const toBetsPath = (auctionUuid: string, search: unknown): string => {
 
 export const createAuctionClient = (options: TAuctionClientOptions = {}): TAuctionClient => {
   const baseUrl = options.baseUrl ?? '';
-  const fetcher = options.fetcher ?? fetch;
+  const fetcher: typeof fetch = options.fetcher ?? ((input, init) => fetch(input, init));
 
   const getList: TAuctionClient['getList'] = async (request) =>
     requestJson(
