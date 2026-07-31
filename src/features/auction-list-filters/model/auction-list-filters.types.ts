@@ -19,4 +19,5 @@ export type TAuctionListFiltersProps = Readonly<{
   search: Readonly<TAuctionListSearch>;
   onApply: (filters: TAuctionListFilters) => void;
   onReset: () => void;
+  className?: string;
 }>;

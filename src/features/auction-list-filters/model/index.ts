@@ -1,2 +1,3 @@
 export { toAuctionListFilters } from './auction-list-filters.mapper';
-export type { TAuctionListFilters } from './auction-list-filters.types';
+export { AuctionListFiltersPanelStore } from './auction-list-filters-panel.store';
+export type { TAuctionListFilters, TAuctionListFiltersProps } from './auction-list-filters.types';

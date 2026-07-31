@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { AuctionListCard, toAuctionListViewModels, useAuctionListQuery } from '@/entities/auction';
-import { AuctionListFilters, type TAuctionListFilters } from '@/features/auction-list-filters';
+import { AuctionListFiltersPanel, type TAuctionListFilters } from '@/features/auction-list-filters';
 import { Badge } from '@/shared/ui';
 import { auctionsListSearchSchema, toAuctionListRequestFromSearch } from './model';
 import {
@@ -91,7 +91,8 @@ export function AuctionsListPage() {
         </Badge>
       </div>
 
-      <AuctionListFilters
+      <AuctionListFiltersPanel
+        className="mt-5"
         search={search}
         onApply={handleFiltersApply}
         onReset={handleFiltersReset}
