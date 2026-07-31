@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { tradingStatusSchema } from '@/entities/auction';
-import { auctionListAuctionTypeFilterSchema, dateTimeWithOffsetSchema } from '@/entities/auction';
+import { auctionListAuctionTypeFilterSchema } from '@/entities/auction';
 import {
   toSearchBoolean,
   toSearchNumber,
@@ -38,8 +38,8 @@ export const auctionsListSearchSchema = z.object({
   ),
   loadCity: z.string().optional().catch(undefined),
   unloadCity: z.string().optional().catch(undefined),
-  loadDateFrom: dateTimeWithOffsetSchema.optional().catch(undefined),
-  loadDateTo: dateTimeWithOffsetSchema.optional().catch(undefined),
+  loadDateFrom: z.iso.date().optional().catch(undefined),
+  loadDateTo: z.iso.date().optional().catch(undefined),
   isAvailable: optionalBooleanSchema,
   isBidder: optionalBooleanSchema,
   currentPriceFrom: optionalNumberSchema,

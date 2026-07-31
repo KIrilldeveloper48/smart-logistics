@@ -1,12 +1,8 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import {
-  AuctionListCard,
-  toAuctionListRequest,
-  toAuctionListViewModels,
-  useAuctionListQuery,
-} from '@/entities/auction';
+import { AuctionListCard, toAuctionListViewModels, useAuctionListQuery } from '@/entities/auction';
+import { AuctionListFilters, type TAuctionListFilters } from '@/features/auction-list-filters';
 import { Badge } from '@/shared/ui';
-import { auctionsListSearchSchema } from './model';
+import { auctionsListSearchSchema, toAuctionListRequestFromSearch } from './model';
 import {
   AuctionListEmptyState,
   AuctionListErrorState,
@@ -18,7 +14,7 @@ export function AuctionsListPage() {
   const navigate = useNavigate({ from: '/' });
   const rawSearch = useSearch({ strict: false });
   const search = auctionsListSearchSchema.parse(rawSearch);
-  const request = toAuctionListRequest(search);
+  const request = toAuctionListRequestFromSearch(search);
   const auctionListQuery = useAuctionListQuery(request);
   const auctions = toAuctionListViewModels(auctionListQuery.data?.data ?? []);
   const currentPage = auctionListQuery.data?.meta?.current_page ?? search.page;
@@ -27,6 +23,26 @@ export function AuctionsListPage() {
   const handlePageChange = (page: number): void => {
     void navigate({
       search: (previous) => ({ ...previous, page }),
+    });
+  };
+
+  const handleFiltersApply = (filters: TAuctionListFilters): void => {
+    void navigate({
+      search: (previous) =>
+        auctionsListSearchSchema.parse({
+          ...previous,
+          ...filters,
+          page: 1,
+        }),
+    });
+  };
+
+  const handleFiltersReset = (): void => {
+    void navigate({
+      search: auctionsListSearchSchema.parse({
+        page: 1,
+        perPage: search.perPage,
+      }),
     });
   };
 
@@ -74,6 +90,12 @@ export function AuctionsListPage() {
             : 'Загрузка данных'}
         </Badge>
       </div>
+
+      <AuctionListFilters
+        search={search}
+        onApply={handleFiltersApply}
+        onReset={handleFiltersReset}
+      />
 
       <section className="mt-6 flex flex-col gap-6" aria-live="polite">
         {content}
