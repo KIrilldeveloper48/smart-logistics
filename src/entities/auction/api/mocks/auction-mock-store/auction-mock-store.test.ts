@@ -5,8 +5,19 @@ describe('auction mock store', () => {
   it('creates deterministic seeded auctions, bets and cities', () => {
     const store = createAuctionMockStore();
 
-    expect(store.getAuctions()).toHaveLength(2);
-    expect(store.getCities()).toEqual(['Пермь', 'Москва', 'Казань', 'Екатеринбург']);
+    expect(store.getAuctions()).toHaveLength(5);
+    expect(store.getCities()).toEqual([
+      'Пермь',
+      'Москва',
+      'Казань',
+      'Екатеринбург',
+      'Санкт-Петербург',
+      'Новосибирск',
+      'Ростов-на-Дону',
+      'Краснодар',
+      'Уфа',
+      'Самара',
+    ]);
     expect(store.getAuctionByUuid('550e8400-e29b-41d4-a716-446655440001')?.bets.bets).toHaveLength(
       2,
     );
