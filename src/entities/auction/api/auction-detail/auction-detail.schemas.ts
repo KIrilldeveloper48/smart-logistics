@@ -6,7 +6,7 @@ import {
   operationTypeSchema,
   paymentDelayTypeSchema,
   tradingStatusSchema,
-} from './auction-common.schemas';
+} from '../auction-common/auction-common.schemas';
 
 export const auctionUuidSchema = z.uuid();
 
@@ -261,11 +261,5 @@ export const betListResponseSchema = z.object({
 });
 
 export const setBetRequestSchema = z.object({
-  price: z.number().positive(),
+  price: z.number().finite().positive(),
 });
-
-export type TAuctionDetailResponse = z.infer<typeof auctionDetailResponseSchema>;
-export type TBetListResponse = z.infer<typeof betListResponseSchema>;
-export type TBetItem = z.infer<typeof betItemSchema>;
-export type TListBetsSearch = z.infer<typeof listBetsSearchSchema>;
-export type TSetBetRequest = z.infer<typeof setBetRequestSchema>;

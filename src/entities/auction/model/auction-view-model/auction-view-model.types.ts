@@ -4,9 +4,18 @@ import type {
   TOperationType,
   TPaymentDelayType,
   TTradingStatus,
-} from '../api';
+} from '../../api';
 
 type TNullable<T> = T | null;
+
+export type TAuctionPriceSource = Readonly<{
+  current?: number | null | undefined;
+  current_no_vat?: number | null | undefined;
+  available?: number | null | undefined;
+  min?: number | null | undefined;
+  max?: number | null | undefined;
+  step?: number | null | undefined;
+}>;
 
 export type TAuctionListItemViewModel = Readonly<{
   auctionId: TNullable<number>;

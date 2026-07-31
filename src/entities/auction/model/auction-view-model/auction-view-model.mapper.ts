@@ -1,7 +1,8 @@
-import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../api';
+import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../../api';
 import type {
   TAuctionDetailViewModel,
   TAuctionListItemViewModel,
+  TAuctionPriceSource,
   TAuctionPriceSummary,
   TAuctionRouteSummary,
   TAuctionRouteViewModel,
@@ -18,17 +19,7 @@ const toRouteSummary = (
 });
 
 const toPriceSummary = (
-  price:
-    | {
-        current?: number | null | undefined;
-        current_no_vat?: number | null | undefined;
-        available?: number | null | undefined;
-        min?: number | null | undefined;
-        max?: number | null | undefined;
-        step?: number | null | undefined;
-      }
-    | null
-    | undefined,
+  price: TAuctionPriceSource | null | undefined,
   pricePerKm?: number | null | undefined,
 ): TAuctionPriceSummary => ({
   current: price?.current ?? null,
@@ -125,7 +116,9 @@ export const toAuctionDetailViewModel = (
       delayType: auction.payment.delay_type ?? null,
       currencyCode: auction.payment.currency_code ?? null,
     },
-    price: toPriceSummary(auction.trading.price),
+    price: auction.trading.no_view_cargo_price
+      ? toPriceSummary(null)
+      : toPriceSummary(auction.trading.price, auction.trading.price?.price_per_km),
     hasMyBid: auction.trading.your?.bet ?? false,
     canSetBid: auction.trading.can_set_bet ?? false,
     isBetsHistoryHidden,

@@ -25,22 +25,17 @@ describe('auction mock store', () => {
     expect(store.getAuctionByUuid(auction.uuid)?.detail.main.cargo_num).toBe('00000001059');
   });
 
-  it('replaces one auction through a validated update and resets the seed state', () => {
-    const store = createAuctionMockStore();
+  it('places a bid atomically and resets the seed state', () => {
+    const store = createAuctionMockStore({ now: () => new Date('2026-05-26T12:00:00Z') });
     const uuid = '550e8400-e29b-41d4-a716-446655440001';
 
-    store.replaceAuction(uuid, (auction) => ({
-      ...auction,
-      detail: {
-        ...auction.detail,
-        trading: { ...auction.detail.trading, can_set_bet: false },
-      },
-    }));
+    expect(store.placeBid(uuid, 28_500)).toEqual({ success: true });
 
-    expect(store.getAuctionByUuid(uuid)?.detail.trading.can_set_bet).toBe(false);
+    expect(store.getAuctionByUuid(uuid)?.detail.trading.price?.current).toBe(28_500);
+    expect(store.getAuctionByUuid(uuid)?.bets.bets[0]?.created_at).toBe('2026-05-26T12:00:00.000Z');
 
     store.reset();
 
-    expect(store.getAuctionByUuid(uuid)?.detail.trading.can_set_bet).toBe(true);
+    expect(store.getAuctionByUuid(uuid)?.detail.trading.price?.current).toBe(29_000);
   });
 });

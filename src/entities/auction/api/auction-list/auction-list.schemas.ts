@@ -4,7 +4,7 @@ import {
   auctionTypeSchema,
   bidMeasurementTypeSchema,
   tradingStatusSchema,
-} from './auction-common.schemas';
+} from '../auction-common/auction-common.schemas';
 
 export const dateTimeWithOffsetSchema = z
   .string()
@@ -211,7 +211,3 @@ export const auctionListResponseSchema = z.object({
     })
     .optional(),
 });
-
-export type TAuctionListRequest = z.infer<typeof auctionListRequestSchema>;
-export type TAuctionListResponse = z.infer<typeof auctionListResponseSchema>;
-export type TAuctionListItem = z.infer<typeof auctionListItemSchema>;

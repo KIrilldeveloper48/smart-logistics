@@ -1,57 +1,20 @@
-import {
-  auctionDetailResponseSchema,
-  betListResponseSchema,
-  type TAuctionDetailResponse,
-  type TBetListResponse,
-} from '../auction-detail.schemas';
-import { auctionListResponseSchema, type TAuctionListItem } from '../auction-list.schemas';
+import { parseAuctionRecord } from './auction-mock-store.helpers';
+import type { TMockBidder } from '../auction-bid/auction-bid.types';
+import type { TAuctionMockRecord } from './auction-mock-store.types';
 
-// Полный набор DTO одного аукциона. Храним одновременно краткую карточку,
-// detail и историю ставок, поскольку разные endpoint'ы возвращают разные формы данных.
-export type TAuctionMockRecord = Readonly<{
-  uuid: string;
-  listItem: TAuctionListItem;
-  detail: TAuctionDetailResponse;
-  bets: TBetListResponse;
-}>;
-
-// Публичный API хранилища. HTTP-обработчики не получают доступ к массиву seed-данных напрямую.
-export type TAuctionMockStore = Readonly<{
-  getAuctions: () => readonly TAuctionMockRecord[];
-  getAuctionByUuid: (uuid: string) => TAuctionMockRecord | null;
-  getCities: () => readonly string[];
-  replaceAuction: (
-    uuid: string,
-    update: (auction: TAuctionMockRecord) => TAuctionMockRecord,
-  ) => TAuctionMockRecord | null;
-  reset: () => void;
-}>;
-
-// В OpenAPI нет отдельной схемы одного элемента списка, поэтому проверяем его
-// через обёртку ответа /auctions/list и извлекаем первый элемент.
-const parseListItem = (item: unknown): TAuctionListItem => {
-  const response = auctionListResponseSchema.parse({ data: [item] });
-  const parsedItem = response.data?.[0];
-
-  if (!parsedItem) {
-    throw new Error('Auction list seed must contain one item.');
-  }
-
-  return parsedItem;
+export const auctionMockBidder: TMockBidder = {
+  subscriberId: 13,
+  contactName: 'Иван Иванов',
+  contactPhone: '+79001234567',
+  organizationId: 14,
+  organizationInn: '9616244307',
+  organizationName: 'ООО Перевозчик',
+  vatRate: 20,
 };
-
-// Проверяем каждый срез seed-данных теми же Zod-схемами, что будут использоваться в API-клиенте.
-// Ошибка в моке обнаружится при старте теста, а не станет неявным расхождением с контрактом.
-const parseAuctionRecord = (auction: TAuctionMockRecord): TAuctionMockRecord => ({
-  uuid: auction.uuid,
-  listItem: parseListItem(auction.listItem),
-  detail: auctionDetailResponseSchema.parse(auction.detail),
-  bets: betListResponseSchema.parse(auction.bets),
-});
 
 // Базовые сценарии для UI и тестов. Первый аукцион доступен для ставки и имеет
 // активную и отменённую ставки; второй демонстрирует планирование и скрытую историю.
-const createAuctionSeeds = (): TAuctionMockRecord[] => [
+export const createAuctionSeeds = (): TAuctionMockRecord[] => [
   // Сценарий: активный аукцион, где пользователь лидирует и может изменить ставку.
   parseAuctionRecord({
     uuid: '550e8400-e29b-41d4-a716-446655440001',
@@ -279,54 +242,3 @@ const createAuctionSeeds = (): TAuctionMockRecord[] => [
     bets: { bets: [] },
   }),
 ];
-
-// Фабрика нужна тестам: каждый тест может создать независимое хранилище.
-// Рабочее приложение использует singleton ниже.
-export const createAuctionMockStore = (): TAuctionMockStore => {
-  let auctions = createAuctionSeeds();
-
-  // Возвращаем глубокую копию, чтобы вызывающий код не мог изменить состояние мока обходным путём.
-  const getAuctions = (): readonly TAuctionMockRecord[] => structuredClone(auctions);
-
-  // По той же причине возвращаем копию отдельной записи, а не ссылку на внутренний объект.
-  const getAuctionByUuid = (uuid: string): TAuctionMockRecord | null => {
-    const auction = auctions.find((item) => item.uuid === uuid);
-
-    return auction ? structuredClone(auction) : null;
-  };
-
-  // Словарь городов выводится из актуальных маршрутов, чтобы не дублировать данные вручную.
-  const getCities = (): readonly string[] => {
-    const cities = auctions.flatMap((auction) => [
-      auction.listItem.route?.load?.city,
-      auction.listItem.route?.unload?.city,
-    ]);
-
-    return [...new Set(cities.filter((city): city is string => Boolean(city)))];
-  };
-
-  // Единственная точка записи. Перед заменой новая запись повторно валидируется
-  // и затем атомарно подменяет старую; POST-обработчик ставки использует её далее.
-  const replaceAuction: TAuctionMockStore['replaceAuction'] = (uuid, update) => {
-    const auction = getAuctionByUuid(uuid);
-
-    if (!auction) {
-      return null;
-    }
-
-    const updatedAuction = parseAuctionRecord(update(auction));
-    auctions = auctions.map((item) => (item.uuid === uuid ? updatedAuction : item));
-
-    return structuredClone(updatedAuction);
-  };
-
-  // Возвращает store к исходным сценариям — это обеспечивает изоляцию тестов.
-  const reset = (): void => {
-    auctions = createAuctionSeeds();
-  };
-
-  return { getAuctions, getAuctionByUuid, getCities, replaceAuction, reset };
-};
-
-// Singleton для browser worker и HTTP-обработчиков приложения.
-export const auctionMockStore = createAuctionMockStore();

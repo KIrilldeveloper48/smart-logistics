@@ -1,9 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { setupServer } from 'msw/node';
-import { problemDetailSchema } from '../auction-common.schemas';
-import { auctionDetailResponseSchema, betListResponseSchema } from '../auction-detail.schemas';
-import { auctionListResponseSchema } from '../auction-list.schemas';
-import { auctionMockStore } from './auction-mock-store';
+import { problemDetailSchema } from '../../auction-common/auction-common.schemas';
+import {
+  auctionDetailResponseSchema,
+  betListResponseSchema,
+} from '../../auction-detail/auction-detail.schemas';
+import { auctionListResponseSchema } from '../../auction-list/auction-list.schemas';
+import { auctionMockStore } from '../auction-mock-store/auction-mock-store';
 import { auctionReadHandlers } from './auction-read.handlers';
 
 const server = setupServer(...auctionReadHandlers);

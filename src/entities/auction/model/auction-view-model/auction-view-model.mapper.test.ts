@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../api';
+import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../../api';
 import {
   toAuctionDetailViewModel,
   toAuctionListItemViewModel,
