@@ -4,7 +4,7 @@ import {
   auctionListAuctionTypeFilterSchema,
   auctionListRequestSchema,
   dateTimeWithOffsetSchema,
-  type AuctionListRequest,
+  type TAuctionListRequest,
 } from './auction-list.schemas';
 
 const auctionListSearchSchema = z.object({
@@ -57,9 +57,9 @@ const auctionListSearchSchema = z.object({
   auctionTypes: z.array(auctionListAuctionTypeFilterSchema).optional(),
 });
 
-export type AuctionListSearch = z.infer<typeof auctionListSearchSchema>;
+export type TAuctionListSearch = z.infer<typeof auctionListSearchSchema>;
 
-export const toAuctionListRequest = (search: AuctionListSearch): AuctionListRequest => {
+export const toAuctionListRequest = (search: Readonly<TAuctionListSearch>): TAuctionListRequest => {
   const params = auctionListSearchSchema.parse(search);
 
   const request = {

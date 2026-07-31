@@ -212,6 +212,6 @@ export const auctionListResponseSchema = z.object({
     .optional(),
 });
 
-export type AuctionListRequest = z.infer<typeof auctionListRequestSchema>;
-export type AuctionListResponse = z.infer<typeof auctionListResponseSchema>;
-export type AuctionListItem = z.infer<typeof auctionListItemSchema>;
+export type TAuctionListRequest = z.infer<typeof auctionListRequestSchema>;
+export type TAuctionListResponse = z.infer<typeof auctionListResponseSchema>;
+export type TAuctionListItem = z.infer<typeof auctionListItemSchema>;

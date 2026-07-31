@@ -1,123 +1,123 @@
-import type { AuctionDetailResponse, AuctionListItem, BetItem } from '../api';
+import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../api';
 
-type Nullable<T> = T | null;
+type TNullable<T> = T | null;
 
-export type AuctionListItemViewModel = {
-  auctionId: Nullable<number>;
-  auctionUuid: Nullable<string>;
-  cargoNumber: Nullable<string>;
-  auctionType: NonNullable<AuctionListItem['main']>['auc_type'] | 'Unknown';
-  auctionStatus: NonNullable<AuctionListItem['trading']>['status'] | 'Unknown';
-  tradingStatus: NonNullable<AuctionListItem['trading']>['status_mobile'] | 'Unknown';
-  organizerName: Nullable<string>;
-  load: AuctionRouteSummary;
-  unload: AuctionRouteSummary;
-  cargo: AuctionCargoSummary;
-  price: AuctionPriceSummary;
+export type TAuctionListItemViewModel = Readonly<{
+  auctionId: TNullable<number>;
+  auctionUuid: TNullable<string>;
+  cargoNumber: TNullable<string>;
+  auctionType: NonNullable<TAuctionListItem['main']>['auc_type'] | 'Unknown';
+  auctionStatus: NonNullable<TAuctionListItem['trading']>['status'] | 'Unknown';
+  tradingStatus: NonNullable<TAuctionListItem['trading']>['status_mobile'] | 'Unknown';
+  organizerName: TNullable<string>;
+  load: TAuctionRouteSummary;
+  unload: TAuctionRouteSummary;
+  cargo: TAuctionCargoSummary;
+  price: TAuctionPriceSummary;
   hasMyBid: boolean;
   canSetBid: boolean;
-};
+}>;
 
-export type AuctionRouteSummary = {
-  city: Nullable<string>;
-  address: Nullable<string>;
-  date: Nullable<string>;
-  pointsCount: Nullable<number>;
-};
+export type TAuctionRouteSummary = Readonly<{
+  city: TNullable<string>;
+  address: TNullable<string>;
+  date: TNullable<string>;
+  pointsCount: TNullable<number>;
+}>;
 
-export type AuctionCargoSummary = {
-  name: Nullable<string>;
-  weight: Nullable<number>;
-  volume: Nullable<number>;
-  bodyType: Nullable<string>;
-  truckCount: Nullable<number>;
-};
+export type TAuctionCargoSummary = Readonly<{
+  name: TNullable<string>;
+  weight: TNullable<number>;
+  volume: TNullable<number>;
+  bodyType: TNullable<string>;
+  truckCount: TNullable<number>;
+}>;
 
-export type AuctionPriceSummary = {
-  current: Nullable<number>;
-  currentWithoutVat: Nullable<number>;
-  pricePerKm: Nullable<number>;
-  available: Nullable<number>;
-  min: Nullable<number>;
-  max: Nullable<number>;
-  step: Nullable<number>;
-};
+export type TAuctionPriceSummary = Readonly<{
+  current: TNullable<number>;
+  currentWithoutVat: TNullable<number>;
+  pricePerKm: TNullable<number>;
+  available: TNullable<number>;
+  min: TNullable<number>;
+  max: TNullable<number>;
+  step: TNullable<number>;
+}>;
 
-export type AuctionDetailViewModel = {
-  auctionId: Nullable<number>;
-  auctionUuid: Nullable<string>;
-  cargoNumber: Nullable<string>;
-  auctionType: NonNullable<AuctionDetailResponse['main']['auc_type']> | 'Unknown';
-  auctionStatus: NonNullable<AuctionDetailResponse['trading']['status']> | 'Unknown';
-  tradingStatus: NonNullable<AuctionDetailResponse['trading']['status_mobile']> | 'Unknown';
-  organizer: AuctionOrganizerViewModel;
-  contacts: AuctionContactViewModel[];
-  routes: AuctionRouteViewModel[];
-  cargo: AuctionDetailCargoViewModel;
-  payment: AuctionPaymentViewModel;
-  price: AuctionPriceSummary;
+export type TAuctionDetailViewModel = Readonly<{
+  auctionId: TNullable<number>;
+  auctionUuid: TNullable<string>;
+  cargoNumber: TNullable<string>;
+  auctionType: NonNullable<TAuctionDetailResponse['main']['auc_type']> | 'Unknown';
+  auctionStatus: NonNullable<TAuctionDetailResponse['trading']['status']> | 'Unknown';
+  tradingStatus: NonNullable<TAuctionDetailResponse['trading']['status_mobile']> | 'Unknown';
+  organizer: TAuctionOrganizerViewModel;
+  contacts: readonly TAuctionContactViewModel[];
+  routes: readonly TAuctionRouteViewModel[];
+  cargo: TAuctionDetailCargoViewModel;
+  payment: TAuctionPaymentViewModel;
+  price: TAuctionPriceSummary;
   hasMyBid: boolean;
   canSetBid: boolean;
   isBetsHistoryHidden: boolean;
   areRouteDetailsHidden: boolean;
-};
+}>;
 
-export type AuctionOrganizerViewModel = {
-  name: Nullable<string>;
-  inn: Nullable<string>;
-  kpp: Nullable<string>;
-};
+export type TAuctionOrganizerViewModel = Readonly<{
+  name: TNullable<string>;
+  inn: TNullable<string>;
+  kpp: TNullable<string>;
+}>;
 
-export type AuctionContactViewModel = {
-  name: Nullable<string>;
-  phone: Nullable<string>;
-  email: Nullable<string>;
-};
+export type TAuctionContactViewModel = Readonly<{
+  name: TNullable<string>;
+  phone: TNullable<string>;
+  email: TNullable<string>;
+}>;
 
-export type AuctionRouteViewModel = {
-  sequence: Nullable<number>;
+export type TAuctionRouteViewModel = Readonly<{
+  sequence: TNullable<number>;
   operationType: 'Loading' | 'Unloading' | 'Unknown';
-  city: Nullable<string>;
-  address: Nullable<string>;
-  startDate: Nullable<string>;
-  endDate: Nullable<string>;
-  contactName: Nullable<string>;
-  contactPhone: Nullable<string>;
-};
+  city: TNullable<string>;
+  address: TNullable<string>;
+  startDate: TNullable<string>;
+  endDate: TNullable<string>;
+  contactName: TNullable<string>;
+  contactPhone: TNullable<string>;
+}>;
 
-export type AuctionDetailCargoViewModel = {
-  name: Nullable<string>;
-  weight: Nullable<string>;
-  volume: Nullable<string>;
-  bodyType: Nullable<string>;
-  truckCount: Nullable<number>;
-  distance: Nullable<number>;
+export type TAuctionDetailCargoViewModel = Readonly<{
+  name: TNullable<string>;
+  weight: TNullable<string>;
+  volume: TNullable<string>;
+  bodyType: TNullable<string>;
+  truckCount: TNullable<number>;
+  distance: TNullable<number>;
   isInternational: boolean;
-  truckType: Nullable<string>;
-};
+  truckType: TNullable<string>;
+}>;
 
-export type AuctionPaymentViewModel = {
-  form: Nullable<string>;
-  delay: Nullable<number>;
-  delayType: Nullable<'CalendarDays' | 'WorkDays' | 'Unknown'>;
-  currencyCode: Nullable<string>;
-};
+export type TAuctionPaymentViewModel = Readonly<{
+  form: TNullable<string>;
+  delay: TNullable<number>;
+  delayType: TNullable<'CalendarDays' | 'WorkDays' | 'Unknown'>;
+  currencyCode: TNullable<string>;
+}>;
 
-export type BetViewModel = {
-  id: Nullable<number>;
-  createdAt: Nullable<string>;
-  transporterName: Nullable<string>;
-  priceWithVat: Nullable<number>;
-  priceWithoutVat: Nullable<number>;
-  place: Nullable<number>;
+export type TBetViewModel = Readonly<{
+  id: TNullable<number>;
+  createdAt: TNullable<string>;
+  transporterName: TNullable<string>;
+  priceWithVat: TNullable<number>;
+  priceWithoutVat: TNullable<number>;
+  place: TNullable<number>;
   isWinner: boolean;
   isRejected: boolean;
-  cancelReason: Nullable<string>;
-};
+  cancelReason: TNullable<string>;
+}>;
 
 const toRouteSummary = (
-  point: NonNullable<AuctionListItem['route']>['load'] | undefined,
-): AuctionRouteSummary => ({
+  point: Readonly<NonNullable<TAuctionListItem['route']>['load']> | undefined,
+): TAuctionRouteSummary => ({
   city: point?.city ?? null,
   address: point?.address ?? null,
   date: point?.date ?? null,
@@ -137,7 +137,7 @@ const toPriceSummary = (
     | null
     | undefined,
   pricePerKm?: number | null | undefined,
-): AuctionPriceSummary => ({
+): TAuctionPriceSummary => ({
   current: price?.current ?? null,
   currentWithoutVat: price?.current_no_vat ?? null,
   pricePerKm: pricePerKm ?? null,
@@ -147,7 +147,9 @@ const toPriceSummary = (
   step: price?.step ?? null,
 });
 
-export const toAuctionListItemViewModel = (item: AuctionListItem): AuctionListItemViewModel => ({
+export const toAuctionListItemViewModel = (
+  item: Readonly<TAuctionListItem>,
+): TAuctionListItemViewModel => ({
   auctionId: item.main?.id ?? null,
   auctionUuid: item.main?.order_uid ?? null,
   cargoNumber: item.main?.cargo_num ?? null,
@@ -169,13 +171,14 @@ export const toAuctionListItemViewModel = (item: AuctionListItem): AuctionListIt
   canSetBid: item.trading?.can_set_bet ?? false,
 });
 
-export const toAuctionListViewModels = (items: AuctionListItem[]): AuctionListItemViewModel[] =>
-  items.map(toAuctionListItemViewModel);
+export const toAuctionListViewModels = (
+  items: readonly TAuctionListItem[],
+): readonly TAuctionListItemViewModel[] => items.map(toAuctionListItemViewModel);
 
 const toRouteViewModel = (
-  route: AuctionDetailResponse['routes'][number],
+  route: Readonly<TAuctionDetailResponse['routes'][number]>,
   areRouteDetailsHidden: boolean,
-): AuctionRouteViewModel => ({
+): TAuctionRouteViewModel => ({
   sequence: route.row_num ?? null,
   operationType: route.op_type ?? 'Unknown',
   city: route.location?.city_name ?? null,
@@ -187,8 +190,8 @@ const toRouteViewModel = (
 });
 
 export const toAuctionDetailViewModel = (
-  auction: AuctionDetailResponse,
-): AuctionDetailViewModel => {
+  auction: Readonly<TAuctionDetailResponse>,
+): TAuctionDetailViewModel => {
   const areRouteDetailsHidden = auction.trading.hide_points_address_and_contacts ?? false;
   const isBetsHistoryHidden =
     auction.hide_bets_history ?? auction.trading.hide_bets_history ?? false;
@@ -237,7 +240,7 @@ export const toAuctionDetailViewModel = (
   };
 };
 
-export const toBetViewModel = (bet: BetItem): BetViewModel => ({
+export const toBetViewModel = (bet: Readonly<TBetItem>): TBetViewModel => ({
   id: bet.id ?? null,
   createdAt: bet.created_at ?? null,
   transporterName: bet.organization_name ?? null,
@@ -249,4 +252,5 @@ export const toBetViewModel = (bet: BetItem): BetViewModel => ({
   cancelReason: bet.cancel_reason || null,
 });
 
-export const toBetViewModels = (bets: BetItem[]): BetViewModel[] => bets.map(toBetViewModel);
+export const toBetViewModels = (bets: readonly TBetItem[]): readonly TBetViewModel[] =>
+  bets.map(toBetViewModel);

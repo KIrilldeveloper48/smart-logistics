@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AuctionDetailResponse, AuctionListItem, BetItem } from '../api';
+import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../api';
 import {
   toAuctionDetailViewModel,
   toAuctionListItemViewModel,
@@ -8,7 +8,7 @@ import {
 
 describe('auction view-model mappers', () => {
   it('maps a list DTO to a UI model with safe fallbacks', () => {
-    const item: AuctionListItem = {
+    const item: TAuctionListItem = {
       main: { id: 10, order_uid: 'auction-uuid', cargo_num: '00000001059', auc_type: 'Down' },
       route: { load: { city: 'Пермь' }, unload: { city: 'Москва' } },
       trading: { status: 'Auction', status_mobile: 'Leading', can_set_bet: true },
@@ -25,7 +25,7 @@ describe('auction view-model mappers', () => {
   });
 
   it('hides route contact details and contacts when the detail DTO requires it', () => {
-    const auction: AuctionDetailResponse = {
+    const auction: TAuctionDetailResponse = {
       main: {},
       organizer: {},
       contacts: [{ name: 'Иван Иванов', phone: '+79000000000' }],
@@ -56,7 +56,7 @@ describe('auction view-model mappers', () => {
   });
 
   it('maps empty string cancellation reasons to null for the UI', () => {
-    const bet: BetItem = { organization_name: 'ООО Перевозчик', cancel_reason: '' };
+    const bet: TBetItem = { organization_name: 'ООО Перевозчик', cancel_reason: '' };
 
     expect(toBetViewModel(bet)).toMatchObject({
       transporterName: 'ООО Перевозчик',

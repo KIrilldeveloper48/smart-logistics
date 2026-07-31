@@ -264,8 +264,8 @@ export const setBetRequestSchema = z.object({
   price: z.number().positive(),
 });
 
-export type AuctionDetailResponse = z.infer<typeof auctionDetailResponseSchema>;
-export type BetListResponse = z.infer<typeof betListResponseSchema>;
-export type BetItem = z.infer<typeof betItemSchema>;
-export type ListBetsSearch = z.infer<typeof listBetsSearchSchema>;
-export type SetBetRequest = z.infer<typeof setBetRequestSchema>;
+export type TAuctionDetailResponse = z.infer<typeof auctionDetailResponseSchema>;
+export type TBetListResponse = z.infer<typeof betListResponseSchema>;
+export type TBetItem = z.infer<typeof betItemSchema>;
+export type TListBetsSearch = z.infer<typeof listBetsSearchSchema>;
+export type TSetBetRequest = z.infer<typeof setBetRequestSchema>;
