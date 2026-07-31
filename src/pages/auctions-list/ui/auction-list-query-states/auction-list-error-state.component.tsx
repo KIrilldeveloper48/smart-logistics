@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui';
-import type { TAuctionListErrorStateProps } from './auction-list-states.types';
+import type { TAuctionListErrorStateProps } from './auction-list-query-states.types';
 
 export function AuctionListErrorState({ onRetry }: TAuctionListErrorStateProps) {
   return (

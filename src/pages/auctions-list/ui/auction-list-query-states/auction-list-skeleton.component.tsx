@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader, Skeleton } from '@/shared/ui';
-import type { TAuctionListSkeletonProps } from './auction-list-states.types';
+import type { TAuctionListSkeletonProps } from './auction-list-query-states.types';
 
 export function AuctionListSkeleton({ count = 6 }: TAuctionListSkeletonProps) {
   return (
