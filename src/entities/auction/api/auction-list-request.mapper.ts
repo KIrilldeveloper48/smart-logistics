@@ -1,0 +1,115 @@
+import { z } from 'zod';
+import { tradingStatusSchema } from './auction-common.schemas';
+import {
+  auctionListAuctionTypeFilterSchema,
+  auctionListRequestSchema,
+  dateTimeWithOffsetSchema,
+  type AuctionListRequest,
+} from './auction-list.schemas';
+
+const auctionListSearchSchema = z.object({
+  page: z.number().int().optional(),
+  perPage: z.number().int().optional(),
+  isOldest: z.boolean().optional(),
+  sort: z
+    .record(z.string(), z.enum(['asc', 'desc']))
+    .nullable()
+    .optional(),
+  status: z.array(tradingStatusSchema).optional(),
+  mobileStatuses: z.array(z.number().int()).optional(),
+  statuses: z.array(z.number().int()).optional(),
+  cargoNum: z.string().optional(),
+  weightFrom: z.number().optional(),
+  weightTo: z.number().optional(),
+  volumeFrom: z.number().optional(),
+  volumeTo: z.number().optional(),
+  bodyTypes: z.array(z.string()).optional(),
+  formType: z.string().nullable().optional(),
+  isInternationalShipment: z.boolean().optional(),
+  loadCity: z.string().optional(),
+  loadGcId: z.number().int().optional(),
+  loadRange: z.number().int().optional(),
+  unloadCity: z.string().optional(),
+  unloadGcId: z.number().int().optional(),
+  unloadRange: z.number().int().optional(),
+  loadDateFrom: dateTimeWithOffsetSchema.optional(),
+  loadDateTo: dateTimeWithOffsetSchema.optional(),
+  unloadDateFrom: dateTimeWithOffsetSchema.optional(),
+  unloadDateTo: dateTimeWithOffsetSchema.optional(),
+  createDateFrom: dateTimeWithOffsetSchema.optional(),
+  createDateTo: dateTimeWithOffsetSchema.optional(),
+  startTimeFrom: dateTimeWithOffsetSchema.optional(),
+  startTimeTo: dateTimeWithOffsetSchema.optional(),
+  stopTimeFrom: dateTimeWithOffsetSchema.optional(),
+  stopTimeTo: dateTimeWithOffsetSchema.optional(),
+  isAvailable: z.boolean().optional(),
+  isFavorite: z.boolean().optional(),
+  isBidder: z.boolean().optional(),
+  customer: z.string().optional(),
+  customerIds: z.array(z.number().int()).optional(),
+  contractor: z.string().nullable().optional(),
+  auctionIds: z.array(z.number().int()).optional(),
+  replaceExternalPads: z.boolean().nullable().optional(),
+  currentPriceFrom: z.number().nullable().optional(),
+  currentPriceTo: z.number().nullable().optional(),
+  pricePerKmFrom: z.number().nullable().optional(),
+  pricePerKmTo: z.number().nullable().optional(),
+  auctionTypes: z.array(auctionListAuctionTypeFilterSchema).optional(),
+});
+
+export type AuctionListSearch = z.infer<typeof auctionListSearchSchema>;
+
+export const toAuctionListRequest = (search: AuctionListSearch): AuctionListRequest => {
+  const params = auctionListSearchSchema.parse(search);
+
+  const request = {
+    page: params.page,
+    per_page: params.perPage,
+    is_oldest: params.isOldest,
+    sort: params.sort,
+    status: params.status,
+    mobile_statuses: params.mobileStatuses,
+    statuses: params.statuses,
+    cargo_num: params.cargoNum,
+    weight_from: params.weightFrom,
+    weight_to: params.weightTo,
+    volume_from: params.volumeFrom,
+    volume_to: params.volumeTo,
+    body_types: params.bodyTypes,
+    form_type: params.formType,
+    is_international_shipment: params.isInternationalShipment,
+    load_city: params.loadCity,
+    load_gc_id: params.loadGcId,
+    load_range: params.loadRange,
+    unload_city: params.unloadCity,
+    unload_gc_id: params.unloadGcId,
+    unload_range: params.unloadRange,
+    load_date_from: params.loadDateFrom,
+    load_date_to: params.loadDateTo,
+    unload_date_from: params.unloadDateFrom,
+    unload_date_to: params.unloadDateTo,
+    create_date_from: params.createDateFrom,
+    create_date_to: params.createDateTo,
+    start_time_from: params.startTimeFrom,
+    start_time_to: params.startTimeTo,
+    stop_time_from: params.stopTimeFrom,
+    stop_time_to: params.stopTimeTo,
+    is_available: params.isAvailable,
+    is_favorite: params.isFavorite,
+    is_bidder: params.isBidder,
+    customer: params.customer,
+    customer_ids: params.customerIds,
+    contractor: params.contractor,
+    auction_ids: params.auctionIds,
+    replace_external_pads: params.replaceExternalPads,
+    current_price_from: params.currentPriceFrom,
+    current_price_to: params.currentPriceTo,
+    price_per_km_from: params.pricePerKmFrom,
+    price_per_km_to: params.pricePerKmTo,
+    auc_type: params.auctionTypes,
+  };
+
+  return auctionListRequestSchema.parse(
+    Object.fromEntries(Object.entries(request).filter(([, value]) => value !== undefined)),
+  );
+};
