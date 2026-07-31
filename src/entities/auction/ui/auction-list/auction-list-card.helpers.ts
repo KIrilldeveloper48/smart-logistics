@@ -9,8 +9,40 @@ const auctionTypeLabels: Readonly<Record<TAuctionListItemViewModel['auctionType'
   Unknown: 'Тип не указан',
 };
 
+const auctionStatusLabels: Readonly<Record<TAuctionListItemViewModel['auctionStatus'], string>> = {
+  Planning: 'Планирование',
+  Auction: 'Торги',
+  DeterminateWinner: 'Определение победителя',
+  WaitDeal: 'Ожидание сделки',
+  InProgress: 'В работе',
+  Finished: 'Завершён',
+  Stopped: 'Приостановлен',
+  Canceled: 'Отменён',
+  Unknown: 'Статус не указан',
+};
+
+const tradingStatusLabels: Readonly<Record<TAuctionListItemViewModel['tradingStatus'], string>> = {
+  NotParticipating: 'Не участвую',
+  Leading: 'Лидирую',
+  Losing: 'Проигрываю',
+  OnPending: 'На рассмотрении',
+  Confirmed: 'Подтверждено',
+  ChoosingWinner: 'Выбор победителя',
+  Winner: 'Победитель',
+  Accepted: 'Принято',
+  Unknown: 'Статус не указан',
+};
+
 export const formatAuctionType = (auctionType: TAuctionListItemViewModel['auctionType']): string =>
   auctionTypeLabels[auctionType];
+
+export const formatAuctionStatus = (
+  auctionStatus: TAuctionListItemViewModel['auctionStatus'],
+): string => auctionStatusLabels[auctionStatus];
+
+export const formatTradingStatus = (
+  tradingStatus: TAuctionListItemViewModel['tradingStatus'],
+): string => tradingStatusLabels[tradingStatus];
 
 export const formatPrice = (price: number | null): string =>
   price === null ? '—' : `${price.toLocaleString('ru-RU')} ₽`;

@@ -1,9 +1,11 @@
 import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 import {
   formatAuctionType,
+  formatAuctionStatus,
   formatDate,
   formatMetric,
   formatPrice,
+  formatTradingStatus,
   getAuctionListPrimaryAction,
 } from './auction-list-card.helpers';
 import type { TAuctionListCardProps } from './auction-list-card.types';
@@ -25,8 +27,8 @@ export function AuctionListCard({ auction, onPrimaryAction }: TAuctionListCardPr
           <Badge variant="outline">{formatAuctionType(auction.auctionType)}</Badge>
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
-          <Badge variant="secondary">{auction.auctionStatus}</Badge>
-          <Badge variant="secondary">{auction.tradingStatus}</Badge>
+          <Badge variant="secondary">{formatAuctionStatus(auction.auctionStatus)}</Badge>
+          <Badge variant="secondary">{formatTradingStatus(auction.tradingStatus)}</Badge>
           {auction.hasMyBid ? <Badge>Моя ставка</Badge> : null}
         </div>
       </CardHeader>
