@@ -21,6 +21,8 @@ import {
 } from '../auction-list.schemas';
 import { auctionMockStore, type TAuctionMockRecord } from './auction-mock-store';
 
+// OpenAPI принимает часть статусов как числа. Таблицы связывают эти legacy-значения
+// с enum'ами DTO, чтобы один store поддерживал оба вида фильтра.
 const auctionStatusCodes: Readonly<Record<TAuctionStatus, number>> = {
   Planning: 1,
   Auction: 2,
@@ -33,6 +35,7 @@ const auctionStatusCodes: Readonly<Record<TAuctionStatus, number>> = {
   Unknown: 0,
 };
 
+// Числовые статусы пользователя используются отдельным параметром mobile_statuses.
 const tradingStatusCodes: Readonly<Record<TTradingStatus, number>> = {
   NotParticipating: 1,
   Leading: 2,
@@ -45,6 +48,7 @@ const tradingStatusCodes: Readonly<Record<TTradingStatus, number>> = {
   Unknown: 0,
 };
 
+// Все ошибки валидации мока имеют тот же формат 422, что описан в OpenAPI.
 const toValidationProblem = (errors: TValidationProblem['errors']): TValidationProblem =>
   validationProblemSchema.parse({
     code: 'validation_failed',
@@ -53,9 +57,11 @@ const toValidationProblem = (errors: TValidationProblem['errors']): TValidationP
     errors,
   });
 
+// Преобразует ошибки Zod в готовый HTTP-ответ, не раскрывая внутренние детали MSW.
 const validationResponse = (errors: TValidationProblem['errors']): HttpResponse<DefaultBodyType> =>
   HttpResponse.json(toValidationProblem(errors), { status: 422 });
 
+// Detail и bets endpoint'ы используют одинаковый контракт ошибки для неизвестного UUID.
 const notFoundResponse = (uuid: string): HttpResponse<DefaultBodyType> =>
   HttpResponse.json(
     problemDetailSchema.parse({
@@ -66,6 +72,7 @@ const notFoundResponse = (uuid: string): HttpResponse<DefaultBodyType> =>
     { status: 404 },
   );
 
+// Небольшие предикаты удерживают основную функцию фильтрации линейной и читаемой.
 const hasText = (value: string | undefined, search: string | undefined): boolean =>
   !search || Boolean(value?.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
 
@@ -87,6 +94,8 @@ const isWithinDateRange = (
   (!from || (value !== undefined && value >= from)) &&
   (!to || (value !== undefined && value <= to));
 
+// Применяет поддерживаемые фильтры запроса к одной карточке аукциона.
+// Неуказанный фильтр всегда пропускает запись, а указанный требует совпадения.
 const matchesRequest = (auction: TAuctionMockRecord, request: TAuctionListRequest): boolean => {
   const { listItem } = auction;
   const { main, cargo, organizer, payment, route, trading } = listItem;
@@ -125,6 +134,8 @@ const matchesRequest = (auction: TAuctionMockRecord, request: TAuctionListReques
   );
 };
 
+// Не каждый ключ sort из OpenAPI нужен текущему UI. Неизвестный ключ остаётся
+// нейтральным, чтобы mock не придумывал поведение, которого нет в приложении.
 const sortValue = (auction: TAuctionListItem, field: string): number | string | null => {
   switch (field) {
     case 'start_time':
@@ -138,6 +149,7 @@ const sortValue = (auction: TAuctionListItem, field: string): number | string | 
   }
 };
 
+// null переносим в конец списка независимо от направления сортировки.
 const compareValues = (left: number | string | null, right: number | string | null): number => {
   if (left === right) {
     return 0;
@@ -154,6 +166,8 @@ const compareValues = (left: number | string | null, right: number | string | nu
   return left > right ? 1 : -1;
 };
 
+// Сортируем копию, не изменяя массив, полученный из store.
+// is_oldest задаёт порядок по времени, если явный sort не передан.
 const sortAuctions = (
   auctions: readonly TAuctionMockRecord[],
   request: TAuctionListRequest,
@@ -189,6 +203,8 @@ const sortAuctions = (
   });
 };
 
+// Собирает ответ /auctions/list: фильтрация → сортировка → пагинация →
+// финальная Zod-проверка данных и meta перед отправкой клиенту.
 const listAuctions = (request: TAuctionListRequest) => {
   const matchedAuctions = auctionMockStore
     .getAuctions()
@@ -214,6 +230,7 @@ const listAuctions = (request: TAuctionListRequest) => {
   });
 };
 
+// Разбирает JSON body POST-запроса. Некорректный payload сразу превращается в 422.
 const parseListRequest = async (
   request: Request,
 ): Promise<TAuctionListRequest | HttpResponse<DefaultBodyType>> => {
@@ -232,6 +249,7 @@ const parseListRequest = async (
   );
 };
 
+// URL query всегда строковый, поэтому явно преобразуем all в boolean до проверки Zod.
 const parseBetsSearch = (request: Request): TListBetsSearch | HttpResponse<DefaultBodyType> => {
   const all = new URL(request.url).searchParams.get('all');
   const value = all === null ? undefined : all === 'true' ? true : all === 'false' ? false : all;
@@ -249,12 +267,16 @@ const parseBetsSearch = (request: Request): TListBetsSearch | HttpResponse<Defau
   );
 };
 
+// Обработчики используют wildcard origin: те же endpoint'ы работают и в node-тестах,
+// и в browser worker Vite, где origin различается.
 export const auctionReadHandlers = [
+  // POST /auctions/list — валидирует фильтры и возвращает страницу карточек.
   http.post('*/auctions/list', async ({ request }) => {
     const payload = await parseListRequest(request);
 
     return payload instanceof HttpResponse ? payload : HttpResponse.json(listAuctions(payload));
   }),
+  // GET /auctions/:auctionUuid — возвращает detail или контрактный 404.
   http.get('*/auctions/:auctionUuid', ({ params }) => {
     const uuid = String(params['auctionUuid']);
 
@@ -268,6 +290,8 @@ export const auctionReadHandlers = [
       ? HttpResponse.json(auctionDetailResponseSchema.parse(auction.detail))
       : notFoundResponse(uuid);
   }),
+  // GET /auctions/:auctionUuid/bets — скрывает историю по DTO-флагу и включает
+  // отменённые ставки только при ?all=true.
   http.get('*/auctions/:auctionUuid/bets', ({ params, request }) => {
     const uuid = String(params['auctionUuid']);
 
