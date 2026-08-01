@@ -1,5 +1,10 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { AuctionListCard, toAuctionListViewModels, useAuctionListQuery } from '@/entities/auction';
+import {
+  AuctionListCard,
+  toAuctionListViewModels,
+  useAuctionDetailPrefetch,
+  useAuctionListQuery,
+} from '@/entities/auction';
 import { AuctionListFiltersPanel, type TAuctionListFilters } from '@/features/auction-list-filters';
 import { Badge } from '@/shared/ui';
 import { auctionsListSearchSchema, toAuctionListRequestFromSearch } from './model';
@@ -15,6 +20,7 @@ export function AuctionsListPage() {
   const rawSearch = useSearch({ strict: false });
   const search = auctionsListSearchSchema.parse(rawSearch);
   const request = toAuctionListRequestFromSearch(search);
+  const prefetchAuctionDetail = useAuctionDetailPrefetch();
   const auctionListQuery = useAuctionListQuery(request);
   const auctions = toAuctionListViewModels(auctionListQuery.data?.data ?? []);
   const currentPage = auctionListQuery.data?.meta?.current_page ?? search.page;
@@ -63,7 +69,11 @@ export function AuctionsListPage() {
       <>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {auctions.map((auction) => (
-            <AuctionListCard key={auction.auctionUuid ?? auction.auctionId} auction={auction} />
+            <AuctionListCard
+              key={auction.auctionUuid ?? auction.auctionId}
+              auction={auction}
+              onIntent={prefetchAuctionDetail}
+            />
           ))}
         </div>
         <AuctionListPagination

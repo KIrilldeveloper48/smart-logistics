@@ -10,12 +10,17 @@ import {
 } from './auction-list-card.helpers';
 import type { TAuctionListCardProps } from './auction-list-card.types';
 
-export function AuctionListCard({ auction, onPrimaryAction }: TAuctionListCardProps) {
+export function AuctionListCard({ auction, onPrimaryAction, onIntent }: TAuctionListCardProps) {
   const action = getAuctionListPrimaryAction(auction);
   const isActionDisabled = action.isDisabled || onPrimaryAction === undefined;
+  const handleIntent = (): void => {
+    if (auction.auctionUuid !== null) {
+      onIntent?.(auction.auctionUuid);
+    }
+  };
 
   return (
-    <Card className="flex h-full flex-col">
+    <Card className="flex h-full flex-col" onPointerEnter={handleIntent} onFocus={handleIntent}>
       <CardHeader className="gap-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
