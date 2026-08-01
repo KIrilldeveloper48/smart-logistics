@@ -7,5 +7,7 @@ export {
   formatPaymentDelay,
   formatPrice,
   formatTradingStatus,
+  getAuctionTypeBadgeClassName,
+  getTradingStatusBadgeClassName,
 } from './auction-presentation.helpers';
 export { DetailItem } from './detail-item.component';

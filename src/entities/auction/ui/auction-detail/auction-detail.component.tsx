@@ -1,5 +1,18 @@
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChartColumnIcon,
+  CircleCheckIcon,
+  CreditCardIcon,
+  MailIcon,
+  MapIcon,
+  PhoneIcon,
+  TruckIcon,
+  UserRoundIcon,
+} from 'lucide-react';
 import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import {
+  DetailItem,
   formatAuctionStatus,
   formatAuctionType,
   formatDate,
@@ -8,7 +21,8 @@ import {
   formatPaymentDelay,
   formatPrice,
   formatTradingStatus,
-  DetailItem,
+  getAuctionTypeBadgeClassName,
+  getTradingStatusBadgeClassName,
 } from '../auction-presentation';
 import type { TAuctionDetailProps } from './auction-detail.types';
 
@@ -25,16 +39,28 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
           </h2>
         </div>
         <div className="flex flex-wrap gap-2" aria-label="Статусы аукциона">
-          <Badge variant="outline">{formatAuctionType(auction.auctionType)}</Badge>
-          <Badge variant="secondary">{formatAuctionStatus(auction.auctionStatus)}</Badge>
-          <Badge variant="secondary">{formatTradingStatus(auction.tradingStatus)}</Badge>
+          <Badge variant="outline" className={getAuctionTypeBadgeClassName(auction.auctionType)}>
+            {auction.auctionType === 'Up' ? <ArrowUpIcon /> : null}
+            {auction.auctionType === 'Down' ? <ArrowDownIcon /> : null}
+            {formatAuctionType(auction.auctionType)}
+          </Badge>
+          <Badge variant="secondary" className="bg-muted text-foreground">
+            {formatAuctionStatus(auction.auctionStatus)}
+          </Badge>
+          <Badge
+            variant="secondary"
+            className={getTradingStatusBadgeClassName(auction.tradingStatus)}
+          >
+            {formatTradingStatus(auction.tradingStatus)}
+          </Badge>
           {auction.hasMyBid ? <Badge>Моя ставка</Badge> : null}
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center gap-3">
+            <UserRoundIcon className="size-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle>Организатор</CardTitle>
           </CardHeader>
           <CardContent>
@@ -47,7 +73,8 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center gap-3">
+            <TruckIcon className="size-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle>Груз и транспорт</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
@@ -65,13 +92,16 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
               <DetailItem term="Расстояние" value={formatMetric(auction.cargo.distance, 'км')} />
             </dl>
             {auction.cargo.isInternational ? (
-              <Badge className="w-fit">Международная перевозка</Badge>
+              <Badge variant="outline" className="w-fit border-blue-100 bg-blue-50 text-blue-700">
+                Международная перевозка
+              </Badge>
             ) : null}
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center gap-3">
+            <CreditCardIcon className="size-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle>Оплата</CardTitle>
           </CardHeader>
           <CardContent>
@@ -87,7 +117,8 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center gap-3">
+            <ChartColumnIcon className="size-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle>Торговые параметры</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 text-sm">
@@ -105,7 +136,15 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
                 <DetailItem term="Шаг" value={formatPrice(auction.price.step)} />
               </dl>
             )}
-            <Badge variant={auction.canSetBid ? 'default' : 'secondary'} className="w-fit">
+            <Badge
+              variant="outline"
+              className={
+                auction.canSetBid
+                  ? 'w-fit border-emerald-100 bg-emerald-50 text-emerald-700'
+                  : 'w-fit border-border bg-muted text-muted-foreground'
+              }
+            >
+              <CircleCheckIcon className="size-4" aria-hidden="true" />
               {auction.canSetBid ? 'Ставка доступна' : 'Ставка недоступна'}
             </Badge>
           </CardContent>
@@ -113,39 +152,45 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex-row items-center gap-3">
+          <MapIcon className="size-5 text-muted-foreground" aria-hidden="true" />
           <CardTitle>Маршрут</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4">
+        <CardContent>
           {auction.routes.length === 0 ? (
             <p className="text-sm text-muted-foreground">Точки маршрута не указаны.</p>
           ) : (
-            <ol className="grid gap-4">
+            <ol className="relative grid gap-4 before:absolute before:bottom-8 before:left-3 before:top-8 before:w-px before:bg-blue-100">
               {auction.routes.map((route, index) => {
                 const sequence = route.sequence ?? index + 1;
 
                 return (
-                  <li key={`${sequence}-${route.operationType}`} className="rounded-lg border p-4">
-                    <h3 className="font-medium">
-                      {sequence}. {formatOperationType(route.operationType)}
-                    </h3>
-                    <dl className="mt-3 grid gap-2 text-sm">
-                      <DetailItem term="Город" value={route.city ?? 'Город не указан'} />
-                      {!auction.areRouteDetailsHidden ? (
-                        <DetailItem term="Адрес" value={route.address ?? 'Адрес не указан'} />
-                      ) : null}
-                      <DetailItem
-                        term="Период"
-                        value={`${formatDate(route.startDate)} — ${formatDate(route.endDate)}`}
-                      />
-                      {!auction.areRouteDetailsHidden &&
-                      (route.contactName !== null || route.contactPhone !== null) ? (
+                  <li key={`${sequence}-${route.operationType}`} className="relative pl-10">
+                    <span className="absolute left-0 top-2 flex size-6 items-center justify-center rounded-full border border-blue-600 bg-background text-sm font-medium text-blue-600">
+                      {sequence}
+                    </span>
+                    <div className="rounded-xl border p-4">
+                      <h3 className="font-medium">
+                        {sequence}. {formatOperationType(route.operationType)}
+                      </h3>
+                      <dl className="mt-3 grid gap-2 text-sm">
+                        <DetailItem term="Город" value={route.city ?? 'Город не указан'} />
+                        {!auction.areRouteDetailsHidden ? (
+                          <DetailItem term="Адрес" value={route.address ?? 'Адрес не указан'} />
+                        ) : null}
                         <DetailItem
-                          term="Контакт"
-                          value={`${route.contactName ?? 'Не указан'}${route.contactPhone === null ? '' : `, ${route.contactPhone}`}`}
+                          term="Период"
+                          value={`${formatDate(route.startDate)} — ${formatDate(route.endDate)}`}
                         />
-                      ) : null}
-                    </dl>
+                        {!auction.areRouteDetailsHidden &&
+                        (route.contactName !== null || route.contactPhone !== null) ? (
+                          <DetailItem
+                            term="Контакт"
+                            value={`${route.contactName ?? 'Не указан'}${route.contactPhone === null ? '' : `, ${route.contactPhone}`}`}
+                          />
+                        ) : null}
+                      </dl>
+                    </div>
                   </li>
                 );
               })}
@@ -156,7 +201,8 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
 
       {!auction.areRouteDetailsHidden ? (
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-center gap-3">
+            <UserRoundIcon className="size-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle>Контакты</CardTitle>
           </CardHeader>
           <CardContent>
@@ -170,16 +216,32 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
                   >
                     <dl className="grid gap-2">
                       <DetailItem term="Имя" value={contact.name ?? 'Контакт не указан'} />
-                      <DetailItem term="Телефон" value={contact.phone ?? 'Телефон не указан'} />
+                      <DetailItem
+                        term="Телефон"
+                        value={
+                          contact.phone ? (
+                            <a
+                              href={`tel:${contact.phone}`}
+                              className="inline-flex items-center gap-2 text-blue-600 underline-offset-4 hover:underline"
+                            >
+                              {contact.phone}
+                              <PhoneIcon className="size-4" aria-hidden="true" />
+                            </a>
+                          ) : (
+                            'Телефон не указан'
+                          )
+                        }
+                      />
                       <DetailItem
                         term="Email"
                         value={
                           contact.email ? (
                             <a
                               href={`mailto:${contact.email}`}
-                              className="underline-offset-4 hover:underline"
+                              className="inline-flex items-center gap-2 text-blue-600 underline-offset-4 hover:underline"
                             >
                               {contact.email}
+                              <MailIcon className="size-4" aria-hidden="true" />
                             </a>
                           ) : (
                             'Email не указан'

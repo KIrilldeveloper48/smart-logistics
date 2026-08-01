@@ -1,4 +1,5 @@
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/ui';
+import { Clock3Icon } from 'lucide-react';
 import { formatDate, formatPrice } from '../auction-presentation';
 import type { TAuctionBetsHistoryProps } from './auction-bets-history.types';
 
@@ -45,7 +46,7 @@ export function AuctionBetsHistory({
         {bets.map((bet, index) => (
           <article
             key={bet.id ?? index}
-            className="grid gap-3 rounded-lg border p-4 text-sm sm:grid-cols-2"
+            className="grid gap-3 rounded-xl border p-4 text-sm sm:grid-cols-2"
           >
             <div>
               <p className="font-medium">{bet.transporterName ?? 'Перевозчик не указан'}</p>
@@ -54,9 +55,13 @@ export function AuctionBetsHistory({
             </div>
 
             <div className="flex flex-wrap content-start gap-2 sm:justify-end">
-              <Badge variant="outline">С НДС: {formatPrice(bet.priceWithVat)}</Badge>
+              <Badge variant="outline" className="bg-muted/50 text-foreground">
+                С НДС: {formatPrice(bet.priceWithVat)}
+              </Badge>
 
-              <Badge variant="outline">Без НДС: {formatPrice(bet.priceWithoutVat)}</Badge>
+              <Badge variant="outline" className="bg-muted/50 text-foreground">
+                Без НДС: {formatPrice(bet.priceWithoutVat)}
+              </Badge>
 
               {!arePlacesHidden && bet.place !== null && (
                 <Badge variant="secondary">Место: {bet.place}</Badge>
@@ -64,7 +69,11 @@ export function AuctionBetsHistory({
 
               {bet.isWinner && <Badge>Победитель</Badge>}
 
-              {bet.isRejected && <Badge variant="destructive">Отменена</Badge>}
+              {bet.isRejected && (
+                <Badge variant="outline" className="border-red-200 bg-red-50 text-red-600">
+                  Отменена
+                </Badge>
+              )}
             </div>
 
             {bet.cancelReason !== null && (
@@ -80,7 +89,8 @@ export function AuctionBetsHistory({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex-row items-center gap-3">
+        <Clock3Icon className="size-5 text-muted-foreground" aria-hidden="true" />
         <CardTitle>История ставок</CardTitle>
       </CardHeader>
       <CardContent>{renderContent()}</CardContent>
