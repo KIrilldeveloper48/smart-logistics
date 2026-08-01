@@ -3,6 +3,7 @@ import {
   formatAuctionStatus,
   formatAuctionType,
   formatDate,
+  DetailItem,
   formatMetric,
   formatPrice,
   formatTradingStatus,
@@ -45,37 +46,35 @@ export function AuctionListCard({
 
       <CardContent className="flex flex-1 flex-col gap-5 text-sm">
         <section>
-          <p className="text-muted-foreground">Маршрут</p>
-          <p className="mt-1 font-medium">
-            {auction.load.city ?? '—'} → {auction.unload.city ?? '—'}
-          </p>
-          <p className="mt-1 text-muted-foreground">
-            {formatDate(auction.load.date)} — {formatDate(auction.unload.date)}
-          </p>
+          <dl className="grid gap-2">
+            <DetailItem
+              term="Маршрут"
+              value={`${auction.load.city ?? '—'} → ${auction.unload.city ?? '—'}`}
+            />
+            <DetailItem
+              term="Период"
+              value={`${formatDate(auction.load.date)} — ${formatDate(auction.unload.date)}`}
+            />
+          </dl>
         </section>
 
         <section>
-          <p className="text-muted-foreground">Груз</p>
-          <p className="mt-1 font-medium">{auction.cargo.name ?? 'Не указан'}</p>
-          <p className="mt-1 text-muted-foreground">
-            {formatMetric(auction.cargo.weight, 'т')} · {formatMetric(auction.cargo.volume, 'м³')} ·{' '}
-            {auction.cargo.bodyType ?? 'Тип кузова не указан'}
-          </p>
+          <dl className="grid gap-2">
+            <DetailItem term="Груз" value={auction.cargo.name ?? 'Не указан'} />
+            <DetailItem
+              term="Вес и объём"
+              value={`${formatMetric(auction.cargo.weight, 'т')} · ${formatMetric(auction.cargo.volume, 'м³')}`}
+            />
+            <DetailItem term="Кузов" value={auction.cargo.bodyType ?? 'Тип кузова не указан'} />
+          </dl>
         </section>
 
-        <section className="grid grid-cols-2 gap-3 rounded-lg bg-muted/50 p-3">
-          <div>
-            <p className="text-xs text-muted-foreground">Текущая цена</p>
-            <p className="mt-1 font-medium">{formatPrice(auction.price.current)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Цена за км</p>
-            <p className="mt-1 font-medium">{formatPrice(auction.price.pricePerKm)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Шаг ставки</p>
-            <p className="mt-1 font-medium">{formatPrice(auction.price.step)}</p>
-          </div>
+        <section className="rounded-lg bg-muted/50 p-3">
+          <dl className="grid gap-3">
+            <DetailItem term="Текущая цена" value={formatPrice(auction.price.current)} />
+            <DetailItem term="Цена за км" value={formatPrice(auction.price.pricePerKm)} />
+            <DetailItem term="Шаг ставки" value={formatPrice(auction.price.step)} />
+          </dl>
         </section>
       </CardContent>
 

@@ -8,3 +8,4 @@ export {
   formatPrice,
   formatTradingStatus,
 } from './auction-presentation.helpers';
+export { DetailItem } from './detail-item.component';
