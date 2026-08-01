@@ -4,4 +4,5 @@ export type TAuctionBidFormProps = Readonly<{
   auction: TAuctionDetailViewModel;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onSuccess: () => void;
 }>;

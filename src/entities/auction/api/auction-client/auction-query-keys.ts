@@ -10,6 +10,7 @@ export const auctionQueryKeys = {
     ['auctions', 'list', auctionListRequestSchema.parse(request)] as const,
   details: () => ['auctions', 'detail'] as const,
   detail: (auctionUuid: string) => ['auctions', 'detail', auctionUuid] as const,
+  betsForAuction: (auctionUuid: string) => ['auctions', 'bets', auctionUuid] as const,
   bets: (auctionUuid: string, search?: Readonly<TListBetsSearch>) =>
     ['auctions', 'bets', auctionUuid, listBetsSearchSchema.parse(search ?? {})] as const,
 };

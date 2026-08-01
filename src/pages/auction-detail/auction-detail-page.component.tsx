@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
+import { useState } from 'react';
 import {
   AuctionApiError,
   AuctionBetsHistory,
@@ -17,6 +18,7 @@ export function AuctionDetailPage() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' });
   const navigate = useNavigate({ from: '/auctions/$auctionUuid' });
   const search = useSearch({ from: '/auctions/$auctionUuid' });
+  const [isBidSuccessVisible, setIsBidSuccessVisible] = useState(false);
   const auctionDetailQuery = useAuctionDetailQuery(auctionUuid);
   const auction = auctionDetailQuery.data
     ? toAuctionDetailViewModel(auctionDetailQuery.data)
@@ -27,6 +29,10 @@ export function AuctionDetailPage() {
   );
 
   const handleBidModeChange = (isOpen: boolean): void => {
+    if (isOpen) {
+      setIsBidSuccessVisible(false);
+    }
+
     void navigate({ search: isOpen ? { mode: 'bid' } : {} });
   };
 
@@ -57,7 +63,16 @@ export function AuctionDetailPage() {
           auction={auction}
           isOpen={search.mode === 'bid'}
           onOpenChange={handleBidModeChange}
+          onSuccess={() => setIsBidSuccessVisible(true)}
         />
+        {isBidSuccessVisible ? (
+          <p
+            className="mt-5 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-700"
+            role="status"
+          >
+            Ставка успешно отправлена. Данные аукциона обновлены.
+          </p>
+        ) : null}
         <div className="mt-5">
           <AuctionBetsHistory
             bets={toBetViewModels(auctionBetsQuery.data?.bets ?? [])}

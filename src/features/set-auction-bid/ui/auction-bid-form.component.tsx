@@ -11,11 +11,16 @@ import {
   DialogTitle,
   Input,
 } from '@/shared/ui';
-import { createAuctionBidFormSchema, getAuctionBidDefaultValues } from '../model';
+import {
+  createAuctionBidFormSchema,
+  getAuctionBidApiErrorMessage,
+  getAuctionBidDefaultValues,
+  useSetAuctionBidMutation,
+} from '../model';
 import type { TAuctionBidFormValues } from '../model';
 import type { TAuctionBidFormProps } from './auction-bid-form.types';
 
-export function AuctionBidForm({ auction, isOpen, onOpenChange }: TAuctionBidFormProps) {
+export function AuctionBidForm({ auction, isOpen, onOpenChange, onSuccess }: TAuctionBidFormProps) {
   const constraints = {
     auctionType: auction.auctionType,
     canSetBid: auction.canSetBid,
@@ -25,14 +30,26 @@ export function AuctionBidForm({ auction, isOpen, onOpenChange }: TAuctionBidFor
     resolver: zodResolver(createAuctionBidFormSchema(constraints)),
     defaultValues: getAuctionBidDefaultValues(constraints),
   });
+  const bidMutation = useSetAuctionBidMutation();
   const priceError = form.formState.errors.price?.message;
 
   const handleOpenChange = (nextIsOpen: boolean): void => {
     if (!nextIsOpen) {
       form.reset(getAuctionBidDefaultValues(constraints));
+      bidMutation.reset();
     }
 
     onOpenChange(nextIsOpen);
+  };
+
+  const handleSubmit = async ({ price }: TAuctionBidFormValues): Promise<void> => {
+    try {
+      await bidMutation.mutateAsync({ auctionUuid: auction.auctionUuid ?? '', price });
+      onSuccess();
+      handleOpenChange(false);
+    } catch (error) {
+      form.setError('price', { message: getAuctionBidApiErrorMessage(error) });
+    }
   };
 
   return (
@@ -45,7 +62,7 @@ export function AuctionBidForm({ auction, isOpen, onOpenChange }: TAuctionBidFor
           </DialogDescription>
         </DialogHeader>
 
-        <form className="grid gap-4" noValidate onSubmit={form.handleSubmit(() => undefined)}>
+        <form className="grid gap-4" noValidate onSubmit={form.handleSubmit(handleSubmit)}>
           <label className="grid gap-2 text-sm font-medium" htmlFor="auction-bid-price">
             Сумма ставки, ₽
             <Input
@@ -82,10 +99,17 @@ export function AuctionBidForm({ auction, isOpen, onOpenChange }: TAuctionBidFor
           </dl>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={bidMutation.isPending}
+              onClick={() => handleOpenChange(false)}
+            >
               Отмена
             </Button>
-            <Button type="submit">Проверить ставку</Button>
+            <Button type="submit" disabled={bidMutation.isPending || auction.auctionUuid === null}>
+              {bidMutation.isPending ? 'Отправка…' : 'Отправить ставку'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
