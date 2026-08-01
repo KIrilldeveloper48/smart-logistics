@@ -1,0 +1,179 @@
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440005",
+  "listItem": {
+    "main": {
+      "id": 1240,
+      "cargo_num": "00000001063",
+      "cargo_date": "2026-05-25T06:00:00",
+      "auc_type": "Down",
+      "order_uid": "550e8400-e29b-41d4-a716-446655440005",
+      "created_at": "2026-05-23T12:00:00",
+      "price_per_km": 21.8
+    },
+    "organizer": {
+      "organization_id": 343,
+      "organization_name": "ВолгаЛогистик",
+      "organization_inn": "6312345678"
+    },
+    "route": {
+      "load": {
+        "city": "Уфа",
+        "address": "Трамвайная, 4",
+        "date": "2026-05-25T06:00:00"
+      },
+      "unload": {
+        "city": "Самара",
+        "address": "Заводское шоссе, 15",
+        "date": "2026-05-26T17:00:00"
+      }
+    },
+    "cargo": {
+      "name": "Бытовая техника",
+      "weight": 12,
+      "volume": 54,
+      "body_type": "Фургон",
+      "truck_count": 1
+    },
+    "trading": {
+      "status": "Finished",
+      "status_mobile": "Winner",
+      "can_set_bet": false,
+      "is_available": false,
+      "is_bidder": true,
+      "bid_measurement_type": "PerRoute",
+      "price": {
+        "start": 40000,
+        "current": 36000,
+        "current_no_vat": 30000
+      },
+      "your": {
+        "bet": true,
+        "last_bet": 36000
+      }
+    },
+    "payment": {
+      "form": "Безналичная с НДС",
+      "currency_code": "643"
+    }
+  },
+  "detail": {
+    "main": {
+      "id": 1240,
+      "cargo_num": "00000001063",
+      "cargo_date": "2026-05-25T06:00:00",
+      "order_uid": "550e8400-e29b-41d4-a716-446655440005",
+      "auc_type": "Down",
+      "created_at": "2026-05-23T12:00:00"
+    },
+    "organizer": {
+      "organization_id": 343,
+      "organization_name": "ВолгаЛогистик",
+      "organization_inn": "6312345678"
+    },
+    "contacts": [
+      {
+        "name": "Елена Кузнецова",
+        "phone": "+78461234567",
+        "email": "transport@example.com"
+      }
+    ],
+    "cargo": {
+      "distance": 460,
+      "truck_count": 1,
+      "body_type": "Фургон",
+      "is_international": false,
+      "car": {
+        "type": "Фургон",
+        "weight": 12,
+        "volume": 54
+      }
+    },
+    "trading": {
+      "status": "Finished",
+      "status_mobile": "Winner",
+      "start_time": "2026-05-23T14:00:00",
+      "stop_time": "2026-05-24T14:00:00",
+      "bid_measurement_type": "PerRoute",
+      "can_set_bet": false,
+      "hide_bets_history": false,
+      "hide_points_address_and_contacts": false,
+      "is_bidder": true,
+      "price": {
+        "start": 40000,
+        "current": 36000,
+        "current_no_vat": 30000,
+        "available": 36000,
+        "min": 30000,
+        "max": 40000,
+        "step": 500,
+        "price_per_km": 21.8
+      },
+      "your": {
+        "bet": true,
+        "last_bet": 30000,
+        "last_bet_with_vat": 36000,
+        "win": true
+      }
+    },
+    "payment": {
+      "form": "Безналичная с НДС",
+      "delay": 10,
+      "delay_type": "WorkDays",
+      "currency_code": "643"
+    },
+    "assembly": {
+      "num": null,
+      "date": null
+    },
+    "routes": [
+      {
+        "row_num": 1,
+        "op_type": "Loading",
+        "location": {
+          "city_name": "Уфа",
+          "city_gc_id": 2
+        }
+      },
+      {
+        "row_num": 2,
+        "op_type": "Unloading",
+        "location": {
+          "city_name": "Самара",
+          "city_gc_id": 63
+        }
+      }
+    ],
+    "admitted_organizations": [
+      {
+        "id": 14,
+        "inn": "9616244307",
+        "name": "ООО Перевозчик",
+        "is_main": true
+      }
+    ],
+    "hide_bets_history": false
+  },
+  "bets": {
+    "bets": [
+      {
+        "id": 43,
+        "created_at": "2026-05-24T13:50:00",
+        "auction_id": 1240,
+        "subscriber_id": 13,
+        "contact_name": "Иван Иванов",
+        "contact_phone": "+79001234567",
+        "price_with_vat": 36000,
+        "price_no_vat": 30000,
+        "organization_id": 14,
+        "organization_inn": "9616244307",
+        "organization_name": "ООО Перевозчик",
+        "is_rejected": false,
+        "is_counter": false,
+        "place": 1,
+        "is_win": true,
+        "run_number": 0,
+        "cancel_reason": ""
+      }
+    ]
+  }
+}

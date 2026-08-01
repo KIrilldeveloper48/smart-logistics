@@ -17,9 +17,22 @@ const parseListItem = (item: unknown): TAuctionListItem => {
   return parsedItem;
 };
 
-export const parseAuctionRecord = (auction: TAuctionMockRecord): TAuctionMockRecord => ({
-  uuid: auction.uuid,
-  listItem: parseListItem(auction.listItem),
-  detail: auctionDetailResponseSchema.parse(auction.detail),
-  bets: betListResponseSchema.parse(auction.bets),
-});
+export const parseAuctionRecord = (auction: unknown): TAuctionMockRecord => {
+  const record = z
+    .object({
+      uuid: auctionUuidSchema,
+      listItem: z.unknown(),
+      detail: z.unknown(),
+      bets: z.unknown(),
+    })
+    .parse(auction);
+
+  return {
+    uuid: record.uuid,
+    listItem: parseListItem(record.listItem),
+    detail: auctionDetailResponseSchema.parse(record.detail),
+    bets: betListResponseSchema.parse(record.bets),
+  };
+};
+import { z } from 'zod';
+import { auctionUuidSchema } from '../../auction-detail/auction-detail.schemas';

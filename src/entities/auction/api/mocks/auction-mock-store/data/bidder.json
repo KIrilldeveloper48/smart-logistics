@@ -1,0 +1,9 @@
+{
+  "subscriberId": 13,
+  "contactName": "Иван Иванов",
+  "contactPhone": "+79001234567",
+  "organizationId": 14,
+  "organizationInn": "9616244307",
+  "organizationName": "ООО Перевозчик",
+  "vatRate": 20
+}

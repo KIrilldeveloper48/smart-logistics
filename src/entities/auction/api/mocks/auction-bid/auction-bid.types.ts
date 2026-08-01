@@ -1,14 +1,8 @@
+import type { z } from 'zod';
 import type { TValidationError } from '../../auction-common/auction-common.types';
+import type { mockBidderSchema } from './auction-bid.schema';
 
-export type TMockBidder = Readonly<{
-  subscriberId: number;
-  contactName: string;
-  contactPhone: string;
-  organizationId: number;
-  organizationInn: string;
-  organizationName: string;
-  vatRate: number;
-}>;
+export type TMockBidder = Readonly<z.infer<typeof mockBidderSchema>>;
 
 export type TPlaceBidInput = Readonly<{
   price: number;

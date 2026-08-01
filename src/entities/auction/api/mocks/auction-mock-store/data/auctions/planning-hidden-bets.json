@@ -1,0 +1,104 @@
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440002",
+  "listItem": {
+    "main": {
+      "id": 1237,
+      "cargo_num": "00000001060",
+      "auc_type": "Request",
+      "order_uid": "550e8400-e29b-41d4-a716-446655440002"
+    },
+    "organizer": {
+      "organization_name": "ТрансЛогистика"
+    },
+    "route": {
+      "load": {
+        "city": "Казань",
+        "date": "2026-05-27T10:00:00"
+      },
+      "unload": {
+        "city": "Екатеринбург",
+        "date": "2026-05-29T12:00:00"
+      }
+    },
+    "cargo": {
+      "name": "Строительные материалы",
+      "weight": 18,
+      "volume": 60,
+      "body_type": "Тент",
+      "truck_count": 1
+    },
+    "trading": {
+      "status": "Planning",
+      "status_mobile": "NotParticipating",
+      "can_set_bet": false,
+      "is_available": false,
+      "is_bidder": false
+    }
+  },
+  "detail": {
+    "main": {
+      "id": 1237,
+      "cargo_num": "00000001060",
+      "order_uid": "550e8400-e29b-41d4-a716-446655440002",
+      "auc_type": "Request"
+    },
+    "organizer": {
+      "organization_name": "ТрансЛогистика"
+    },
+    "contacts": [],
+    "cargo": {
+      "distance": 1080,
+      "truck_count": 1,
+      "body_type": "Тент",
+      "is_international": false,
+      "car": null
+    },
+    "trading": {
+      "status": "Planning",
+      "status_mobile": "NotParticipating",
+      "can_set_bet": false,
+      "hide_bets_history": true,
+      "hide_points_address_and_contacts": true,
+      "price": {
+        "min": null,
+        "max": null,
+        "step": null
+      },
+      "your": {
+        "bet": false,
+        "last_bet": null,
+        "win": false
+      }
+    },
+    "payment": {
+      "form": "Безналичная без НДС",
+      "delay_type": null,
+      "currency_code": "643"
+    },
+    "assembly": {
+      "num": null,
+      "date": null
+    },
+    "routes": [
+      {
+        "row_num": 1,
+        "op_type": "Loading",
+        "location": {
+          "city_name": "Казань"
+        }
+      },
+      {
+        "row_num": 2,
+        "op_type": "Unloading",
+        "location": {
+          "city_name": "Екатеринбург"
+        }
+      }
+    ],
+    "admitted_organizations": [],
+    "hide_bets_history": true
+  },
+  "bets": {
+    "bets": []
+  }
+}
