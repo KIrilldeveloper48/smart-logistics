@@ -10,7 +10,7 @@ import {
   TruckIcon,
   UserRoundIcon,
 } from 'lucide-react';
-import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import {
   DetailItem,
   formatAuctionStatus,
@@ -26,7 +26,7 @@ import {
 } from '../auction-presentation';
 import type { TAuctionDetailProps } from './auction-detail.types';
 
-export function AuctionDetail({ auction }: TAuctionDetailProps) {
+export function AuctionDetail({ auction, onSetBid }: TAuctionDetailProps) {
   const isPriceHidden = Object.values(auction.price).every((value) => value === null);
 
   return (
@@ -38,22 +38,27 @@ export function AuctionDetail({ auction }: TAuctionDetailProps) {
             {auction.cargoNumber ?? 'Номер не указан'}
           </h2>
         </div>
-        <div className="flex flex-wrap gap-2" aria-label="Статусы аукциона">
-          <Badge variant="outline" className={getAuctionTypeBadgeClassName(auction.auctionType)}>
-            {auction.auctionType === 'Up' ? <ArrowUpIcon /> : null}
-            {auction.auctionType === 'Down' ? <ArrowDownIcon /> : null}
-            {formatAuctionType(auction.auctionType)}
-          </Badge>
-          <Badge variant="secondary" className="bg-muted text-foreground">
-            {formatAuctionStatus(auction.auctionStatus)}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className={getTradingStatusBadgeClassName(auction.tradingStatus)}
-          >
-            {formatTradingStatus(auction.tradingStatus)}
-          </Badge>
-          {auction.hasMyBid ? <Badge>Моя ставка</Badge> : null}
+        <div className="flex flex-col items-start gap-3 sm:items-end">
+          <div className="flex flex-wrap gap-2" aria-label="Статусы аукциона">
+            <Badge variant="outline" className={getAuctionTypeBadgeClassName(auction.auctionType)}>
+              {auction.auctionType === 'Up' ? <ArrowUpIcon /> : null}
+              {auction.auctionType === 'Down' ? <ArrowDownIcon /> : null}
+              {formatAuctionType(auction.auctionType)}
+            </Badge>
+            <Badge variant="secondary" className="bg-muted text-foreground">
+              {formatAuctionStatus(auction.auctionStatus)}
+            </Badge>
+            <Badge
+              variant="secondary"
+              className={getTradingStatusBadgeClassName(auction.tradingStatus)}
+            >
+              {formatTradingStatus(auction.tradingStatus)}
+            </Badge>
+            {auction.hasMyBid ? <Badge>Моя ставка</Badge> : null}
+          </div>
+          <Button disabled={!auction.canSetBid} onClick={onSetBid}>
+            {auction.hasMyBid ? 'Изменить ставку' : 'Сделать ставку'}
+          </Button>
         </div>
       </header>
 

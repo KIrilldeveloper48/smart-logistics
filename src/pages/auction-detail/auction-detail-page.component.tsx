@@ -58,7 +58,7 @@ export function AuctionDetailPage() {
 
     return (
       <>
-        <AuctionDetail auction={auction} />
+        <AuctionDetail auction={auction} onSetBid={() => handleBidModeChange(true)} />
         <AuctionBidForm
           auction={auction}
           isOpen={search.mode === 'bid'}
