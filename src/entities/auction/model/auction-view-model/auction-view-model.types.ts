@@ -74,6 +74,7 @@ export type TAuctionDetailViewModel = Readonly<{
   hasMyBid: boolean;
   canSetBid: boolean;
   isBetsHistoryHidden: boolean;
+  areBetPlacesHidden: boolean;
   areRouteDetailsHidden: boolean;
 }>;
 

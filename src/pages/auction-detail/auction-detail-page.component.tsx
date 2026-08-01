@@ -1,8 +1,11 @@
 import { Link, useParams } from '@tanstack/react-router';
 import {
   AuctionApiError,
+  AuctionBetsHistory,
   AuctionDetail,
   toAuctionDetailViewModel,
+  toBetViewModels,
+  useAuctionBetsQuery,
   useAuctionDetailQuery,
 } from '@/entities/auction';
 import { Button } from '@/shared/ui';
@@ -11,6 +14,13 @@ import { AuctionDetailErrorState, AuctionDetailNotFoundState, AuctionDetailSkele
 export function AuctionDetailPage() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' });
   const auctionDetailQuery = useAuctionDetailQuery(auctionUuid);
+  const auction = auctionDetailQuery.data
+    ? toAuctionDetailViewModel(auctionDetailQuery.data)
+    : null;
+  const auctionBetsQuery = useAuctionBetsQuery(
+    auctionUuid,
+    auction !== null && !auction.isBetsHistoryHidden,
+  );
 
   const content = (() => {
     if (auctionDetailQuery.isPending) {
@@ -28,7 +38,25 @@ export function AuctionDetailPage() {
       return <AuctionDetailErrorState onRetry={() => void auctionDetailQuery.refetch()} />;
     }
 
-    return <AuctionDetail auction={toAuctionDetailViewModel(auctionDetailQuery.data)} />;
+    if (auction === null) {
+      return null;
+    }
+
+    return (
+      <>
+        <AuctionDetail auction={auction} />
+        <div className="mt-5">
+          <AuctionBetsHistory
+            bets={toBetViewModels(auctionBetsQuery.data?.bets ?? [])}
+            isHidden={auction.isBetsHistoryHidden}
+            arePlacesHidden={auction.areBetPlacesHidden}
+            isPending={auctionBetsQuery.isPending}
+            isError={auctionBetsQuery.isError}
+            onRetry={() => void auctionBetsQuery.refetch()}
+          />
+        </div>
+      </>
+    );
   })();
 
   return (

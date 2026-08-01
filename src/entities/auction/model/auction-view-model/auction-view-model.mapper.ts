@@ -122,6 +122,7 @@ export const toAuctionDetailViewModel = (
     hasMyBid: auction.trading.your?.bet ?? false,
     canSetBid: auction.trading.can_set_bet ?? false,
     isBetsHistoryHidden,
+    areBetPlacesHidden: auction.trading.hide_places ?? false,
     areRouteDetailsHidden,
   };
 };
