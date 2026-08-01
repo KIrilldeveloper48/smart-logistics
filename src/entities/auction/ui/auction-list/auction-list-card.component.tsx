@@ -1,13 +1,13 @@
 import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 import {
-  formatAuctionType,
   formatAuctionStatus,
+  formatAuctionType,
   formatDate,
   formatMetric,
   formatPrice,
   formatTradingStatus,
-  getAuctionListPrimaryAction,
-} from './auction-list-card.helpers';
+} from '../auction-presentation';
+import { getAuctionListPrimaryAction } from './auction-list-card.helpers';
 import type { TAuctionListCardProps } from './auction-list-card.types';
 
 export function AuctionListCard({

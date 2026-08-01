@@ -1,5 +1,10 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { AuctionApiError, useAuctionDetailQuery } from '@/entities/auction';
+import {
+  AuctionApiError,
+  AuctionDetail,
+  toAuctionDetailViewModel,
+  useAuctionDetailQuery,
+} from '@/entities/auction';
 import { Button } from '@/shared/ui';
 import { AuctionDetailErrorState, AuctionDetailNotFoundState, AuctionDetailSkeleton } from './ui';
 
@@ -23,7 +28,7 @@ export function AuctionDetailPage() {
       return <AuctionDetailErrorState onRetry={() => void auctionDetailQuery.refetch()} />;
     }
 
-    return <p className="mt-6 text-sm text-muted-foreground">Данные аукциона загружены.</p>;
+    return <AuctionDetail auction={toAuctionDetailViewModel(auctionDetailQuery.data)} />;
   })();
 
   return (
