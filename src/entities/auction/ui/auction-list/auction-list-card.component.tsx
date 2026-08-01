@@ -1,5 +1,14 @@
 import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  BoxIcon,
+  Clock3Icon,
+  PackageIcon,
+  RouteIcon,
+  WeightIcon,
+} from 'lucide-react';
+import {
   formatAuctionStatus,
   formatAuctionType,
   formatDate,
@@ -8,7 +17,11 @@ import {
   formatPrice,
   formatTradingStatus,
 } from '../auction-presentation';
-import { getAuctionListPrimaryAction } from './auction-list-card.helpers';
+import {
+  getAuctionListPrimaryAction,
+  getAuctionTypeBadgeClassName,
+  getTradingStatusBadgeClassName,
+} from './auction-list-card.helpers';
 import type { TAuctionListCardProps } from './auction-list-card.types';
 
 export function AuctionListCard({
@@ -35,11 +48,22 @@ export function AuctionListCard({
               {auction.cargoNumber ?? 'Номер не указан'}
             </CardTitle>
           </div>
-          <Badge variant="outline">{formatAuctionType(auction.auctionType)}</Badge>
+          <Badge variant="outline" className={getAuctionTypeBadgeClassName(auction.auctionType)}>
+            {auction.auctionType === 'Up' ? <ArrowUpIcon /> : null}
+            {auction.auctionType === 'Down' ? <ArrowDownIcon /> : null}
+            {formatAuctionType(auction.auctionType)}
+          </Badge>
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
-          <Badge variant="secondary">{formatAuctionStatus(auction.auctionStatus)}</Badge>
-          <Badge variant="secondary">{formatTradingStatus(auction.tradingStatus)}</Badge>
+          <Badge variant="secondary" className="bg-muted text-foreground">
+            {formatAuctionStatus(auction.auctionStatus)}
+          </Badge>
+          <Badge
+            variant="secondary"
+            className={getTradingStatusBadgeClassName(auction.tradingStatus)}
+          >
+            {formatTradingStatus(auction.tradingStatus)}
+          </Badge>
           {auction.hasMyBid ? <Badge>Моя ставка</Badge> : null}
         </div>
       </CardHeader>
@@ -50,22 +74,33 @@ export function AuctionListCard({
             <DetailItem
               term="Маршрут"
               value={`${auction.load.city ?? '—'} → ${auction.unload.city ?? '—'}`}
+              icon={<RouteIcon className="size-4" aria-hidden="true" />}
             />
             <DetailItem
               term="Период"
               value={`${formatDate(auction.load.date)} — ${formatDate(auction.unload.date)}`}
+              icon={<Clock3Icon className="size-4" aria-hidden="true" />}
             />
           </dl>
         </section>
 
         <section>
           <dl className="grid gap-2">
-            <DetailItem term="Груз" value={auction.cargo.name ?? 'Не указан'} />
+            <DetailItem
+              term="Груз"
+              value={auction.cargo.name ?? 'Не указан'}
+              icon={<PackageIcon className="size-4" aria-hidden="true" />}
+            />
             <DetailItem
               term="Вес и объём"
               value={`${formatMetric(auction.cargo.weight, 'т')} · ${formatMetric(auction.cargo.volume, 'м³')}`}
+              icon={<WeightIcon className="size-4" aria-hidden="true" />}
             />
-            <DetailItem term="Кузов" value={auction.cargo.bodyType ?? 'Тип кузова не указан'} />
+            <DetailItem
+              term="Кузов"
+              value={auction.cargo.bodyType ?? 'Тип кузова не указан'}
+              icon={<BoxIcon className="size-4" aria-hidden="true" />}
+            />
           </dl>
         </section>
 
