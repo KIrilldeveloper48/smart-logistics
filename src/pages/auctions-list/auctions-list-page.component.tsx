@@ -32,6 +32,13 @@ export function AuctionsListPage() {
     });
   };
 
+  const handleOpenDetails = (auctionUuid: string): void => {
+    void navigate({
+      to: '/auctions/$auctionUuid',
+      params: { auctionUuid },
+    });
+  };
+
   const handleFiltersApply = (filters: TAuctionListFilters): void => {
     void navigate({
       search: (previous) =>
@@ -73,6 +80,7 @@ export function AuctionsListPage() {
               key={auction.auctionUuid ?? auction.auctionId}
               auction={auction}
               onIntent={prefetchAuctionDetail}
+              onOpenDetails={handleOpenDetails}
             />
           ))}
         </div>

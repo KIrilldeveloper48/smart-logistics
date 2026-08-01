@@ -10,7 +10,12 @@ import {
 } from './auction-list-card.helpers';
 import type { TAuctionListCardProps } from './auction-list-card.types';
 
-export function AuctionListCard({ auction, onPrimaryAction, onIntent }: TAuctionListCardProps) {
+export function AuctionListCard({
+  auction,
+  onPrimaryAction,
+  onOpenDetails,
+  onIntent,
+}: TAuctionListCardProps) {
   const action = getAuctionListPrimaryAction(auction);
   const isActionDisabled = action.isDisabled || onPrimaryAction === undefined;
   const handleIntent = (): void => {
@@ -75,13 +80,22 @@ export function AuctionListCard({ auction, onPrimaryAction, onIntent }: TAuction
       </CardContent>
 
       <CardFooter>
-        <Button
-          className="w-full"
-          disabled={isActionDisabled}
-          onClick={() => onPrimaryAction?.(auction)}
-        >
-          {action.label}
-        </Button>
+        <div className="grid w-full gap-2 sm:grid-cols-2">
+          <Button
+            variant="outline"
+            disabled={auction.auctionUuid === null || onOpenDetails === undefined}
+            onClick={() => {
+              if (auction.auctionUuid !== null) {
+                onOpenDetails?.(auction.auctionUuid);
+              }
+            }}
+          >
+            Подробнее
+          </Button>
+          <Button disabled={isActionDisabled} onClick={() => onPrimaryAction?.(auction)}>
+            {action.label}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
