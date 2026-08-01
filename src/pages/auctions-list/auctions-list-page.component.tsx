@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import {
   AuctionListCard,
+  type TAuctionListItemViewModel,
   toAuctionListViewModels,
   useAuctionDetailPrefetch,
   useAuctionListQuery,
@@ -36,6 +37,18 @@ export function AuctionsListPage() {
     void navigate({
       to: '/auctions/$auctionUuid',
       params: { auctionUuid },
+    });
+  };
+
+  const handlePlaceBid = (auction: TAuctionListItemViewModel): void => {
+    if (auction.auctionUuid === null) {
+      return;
+    }
+
+    void navigate({
+      to: '/auctions/$auctionUuid',
+      params: { auctionUuid: auction.auctionUuid },
+      search: { mode: 'bid' },
     });
   };
 
@@ -81,6 +94,7 @@ export function AuctionsListPage() {
               auction={auction}
               onIntent={prefetchAuctionDetail}
               onOpenDetails={handleOpenDetails}
+              onPrimaryAction={handlePlaceBid}
             />
           ))}
         </div>

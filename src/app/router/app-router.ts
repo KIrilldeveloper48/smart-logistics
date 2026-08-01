@@ -1,7 +1,7 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { auctionUuidSchema } from '@/entities/auction';
 import { RootLayout } from '@/app/router/root-layout.component';
-import { AuctionDetailPage } from '@/pages/auction-detail';
+import { AuctionDetailPage, auctionDetailSearchSchema } from '@/pages/auction-detail';
 import { AuctionsListPage, auctionsListSearchSchema } from '@/pages/auctions-list';
 
 const rootRoute = createRootRoute({
@@ -21,6 +21,7 @@ const auctionDetailRoute = createRoute({
   params: {
     parse: ({ auctionUuid }) => ({ auctionUuid: auctionUuidSchema.parse(auctionUuid) }),
   },
+  validateSearch: auctionDetailSearchSchema,
   component: AuctionDetailPage,
 });
 

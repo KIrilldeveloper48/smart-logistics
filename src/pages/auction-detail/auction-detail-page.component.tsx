@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 import {
   AuctionApiError,
@@ -9,11 +9,14 @@ import {
   useAuctionBetsQuery,
   useAuctionDetailQuery,
 } from '@/entities/auction';
+import { AuctionBidForm } from '@/features/set-auction-bid';
 import { Button } from '@/shared/ui';
 import { AuctionDetailErrorState, AuctionDetailNotFoundState, AuctionDetailSkeleton } from './ui';
 
 export function AuctionDetailPage() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' });
+  const navigate = useNavigate({ from: '/auctions/$auctionUuid' });
+  const search = useSearch({ from: '/auctions/$auctionUuid' });
   const auctionDetailQuery = useAuctionDetailQuery(auctionUuid);
   const auction = auctionDetailQuery.data
     ? toAuctionDetailViewModel(auctionDetailQuery.data)
@@ -22,6 +25,10 @@ export function AuctionDetailPage() {
     auctionUuid,
     auction !== null && !auction.isBetsHistoryHidden,
   );
+
+  const handleBidModeChange = (isOpen: boolean): void => {
+    void navigate({ search: isOpen ? { mode: 'bid' } : {} });
+  };
 
   const content = (() => {
     if (auctionDetailQuery.isPending) {
@@ -46,6 +53,11 @@ export function AuctionDetailPage() {
     return (
       <>
         <AuctionDetail auction={auction} />
+        <AuctionBidForm
+          auction={auction}
+          isOpen={search.mode === 'bid'}
+          onOpenChange={handleBidModeChange}
+        />
         <div className="mt-5">
           <AuctionBetsHistory
             bets={toBetViewModels(auctionBetsQuery.data?.bets ?? [])}
