@@ -62,5 +62,5 @@ npm run build
 - `src/shared` — UI-примитивы, utilities и assets.
 
 Правила разработки и порядок дальнейших вех описаны в
-[DEVELOPMENT_GUIDELINES.md](./DEVELOPMENT_GUIDELINES.md),
-[WORK_PLAN.md](./WORK_PLAN.md) и [MILESTONE_1_COMMITS.md](./MILESTONE_1_COMMITS.md).
+[DEVELOPMENT_GUIDELINES.md](./docs/DEVELOPMENT_GUIDELINES.md),
+[WORK_PLAN.md](./docs/WORK_PLAN.md) и [MILESTONE_1_COMMITS.md](./docs/MILESTONE_1_COMMITS.md).
