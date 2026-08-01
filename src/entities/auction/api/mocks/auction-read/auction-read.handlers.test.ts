@@ -33,6 +33,19 @@ describe('auction read handlers', () => {
     expect(payload.meta).toMatchObject({ current_page: 1, per_page: 1, total: 1 });
   });
 
+  it('returns the second page from the fixture set', async () => {
+    const response = await fetch('http://localhost/auctions/list', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ page: 2, per_page: 20 }),
+    });
+    const payload = auctionListResponseSchema.parse(await response.json());
+
+    expect(response.status).toBe(200);
+    expect(payload.data).toHaveLength(5);
+    expect(payload.meta).toMatchObject({ current_page: 2, last_page: 2, per_page: 20, total: 25 });
+  });
+
   it('returns a contract-valid detail response or a 404 problem', async () => {
     const detailResponse = await fetch(
       'http://localhost/auctions/550e8400-e29b-41d4-a716-446655440001',
