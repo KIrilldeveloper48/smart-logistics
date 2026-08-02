@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react';
 import { auctionCityOptions } from '@/entities/auction';
 import { Button, Input } from '@/shared/ui';
+import { cn } from '@/shared/lib';
 import { toAuctionListFilters } from '../model';
 import { toDateInputValue } from '../model/auction-list-filters.helpers';
 import type { TAuctionListFiltersProps } from '../model/auction-list-filters.types';
@@ -8,7 +9,12 @@ import type { TAuctionListFiltersProps } from '../model/auction-list-filters.typ
 const selectClassName =
   'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
-export function AuctionListFilters({ search, onApply, onReset }: TAuctionListFiltersProps) {
+export function AuctionListFilters({
+  search,
+  onApply,
+  onReset,
+  className,
+}: TAuctionListFiltersProps) {
   const formKey = JSON.stringify(search);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
@@ -19,7 +25,7 @@ export function AuctionListFilters({ search, onApply, onReset }: TAuctionListFil
   return (
     <form
       key={formKey}
-      className="grid gap-4 rounded-xl border bg-card p-4"
+      className={cn('grid gap-4 rounded-xl border bg-card p-4', className)}
       onSubmit={handleSubmit}
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

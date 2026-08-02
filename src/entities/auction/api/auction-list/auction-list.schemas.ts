@@ -2,16 +2,13 @@ import { z } from 'zod';
 import {
   auctionStatusSchema,
   auctionTypeSchema,
+  auctionUuidSchema,
   bidMeasurementTypeSchema,
+  openApiDateTimeSchema,
   tradingStatusSchema,
 } from '../auction-common/auction-common.schemas';
 
-export const dateTimeWithOffsetSchema = z
-  .string()
-  .regex(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(([+-]\d{2}:\d{2})|Z)$/,
-    'Expected an ISO 8601 date-time with an offset.',
-  );
+export const dateTimeWithOffsetSchema = z.iso.datetime({ offset: true });
 
 const sortDirectionSchema = z.enum(['asc', 'desc']);
 
@@ -67,7 +64,7 @@ export const auctionListRequestSchema = z.object({
 const routePointSchema = z.object({
   city: z.string().optional(),
   address: z.string().optional(),
-  date: z.string().optional(),
+  date: openApiDateTimeSchema.optional(),
   city_gc_id: z.number().int().optional(),
   points_count: z.number().int().optional(),
 });
@@ -88,7 +85,7 @@ const auctionListItemSchema = z.object({
       cargo_num: z.string().optional(),
       cargo_date: z.string().optional(),
       auc_type: auctionTypeSchema.optional(),
-      order_uid: z.string().optional(),
+      order_uid: auctionUuidSchema.optional(),
       created_at: z.string().optional(),
       priority_sort: z.number().int().optional(),
       is_assembly: z.boolean().optional(),
@@ -156,8 +153,8 @@ const auctionListItemSchema = z.object({
       status_mobile: z
         .enum(['NotParticipating', 'Leading', 'Losing', 'Winner', 'Confirmed', 'Unknown'])
         .optional(),
-      start_time: z.string().optional(),
-      stop_time: z.string().optional(),
+      start_time: openApiDateTimeSchema.optional(),
+      stop_time: openApiDateTimeSchema.optional(),
       bid_measurement_type: bidMeasurementTypeSchema.nullable().optional(),
       can_set_bet: z.boolean().optional(),
       allow_counter_bets: z.boolean().optional(),

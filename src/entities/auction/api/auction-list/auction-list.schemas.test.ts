@@ -46,6 +46,13 @@ describe('auction list contract schemas', () => {
     expect(response.data?.[0]?.cargo?.car).toBeNull();
     expect(response.data?.[0]?.trading?.bid_measurement_type).toBeNull();
   });
+
+  it('rejects a non-UUID order identifier in a list response', () => {
+    expect(
+      auctionListResponseSchema.safeParse({ data: [{ main: { order_uid: 'not-a-uuid' } }] })
+        .success,
+    ).toBe(false);
+  });
 });
 
 describe('toAuctionListRequest', () => {

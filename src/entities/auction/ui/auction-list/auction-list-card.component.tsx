@@ -42,7 +42,7 @@ export function AuctionListCard({
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="text-sm text-muted-foreground">Заявка</p>
-            <CardTitle className="mt-1 text-lg">
+            <CardTitle className="mt-1 break-all text-lg">
               {auction.cargoNumber ?? 'Номер не указан'}
             </CardTitle>
           </div>
@@ -124,7 +124,7 @@ export function AuctionListCard({
           >
             Подробнее
           </Button>
-          <Button disabled={isActionDisabled} onClick={() => onPrimaryAction?.(auction)}>
+          <Button disabled={isActionDisabled} onClick={() => onPrimaryAction?.(auction, action)}>
             {action.label}
           </Button>
         </div>

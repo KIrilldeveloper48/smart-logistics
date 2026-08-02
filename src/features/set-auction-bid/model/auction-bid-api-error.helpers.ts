@@ -13,3 +13,17 @@ export const getAuctionBidApiErrorMessage = (error: unknown): string => {
 
   return problem?.message ?? error.message;
 };
+
+export const getAuctionBidPriceErrorMessage = (error: unknown): string | null => {
+  if (!(error instanceof AuctionApiError)) {
+    return null;
+  }
+
+  const { problem, status } = error.context;
+
+  if (status !== 422 || !problem || !('errors' in problem)) {
+    return null;
+  }
+
+  return problem.errors.find((item) => item.field === 'price')?.message ?? null;
+};

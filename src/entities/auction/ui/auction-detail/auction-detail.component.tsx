@@ -25,16 +25,25 @@ import {
   getTradingStatusBadgeClassName,
 } from '../auction-presentation';
 import type { TAuctionDetailProps } from './auction-detail.types';
+import {
+  formatCargoDimensions,
+  formatLoadingTypes,
+  formatRequiredDocuments,
+  formatTemperatureRange,
+  formatVehicleDimensions,
+  getAdditionalRequirements,
+} from './auction-detail.helpers';
 
 export function AuctionDetail({ auction, onSetBid }: TAuctionDetailProps) {
   const isPriceHidden = Object.values(auction.price).every((value) => value === null);
+  const additionalRequirements = getAdditionalRequirements(auction.cargo);
 
   return (
     <article className="mt-6 grid gap-6">
       <header className="flex flex-col gap-3 border-b pb-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Заявка</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">
+          <h2 className="mt-1 break-all text-xl font-semibold tracking-tight sm:text-2xl">
             {auction.cargoNumber ?? 'Номер не указан'}
           </h2>
         </div>
@@ -89,13 +98,49 @@ export function AuctionDetail({ auction, onSetBid }: TAuctionDetailProps) {
                 term="Вес и объём"
                 value={`${formatMetric(auction.cargo.weight, 'т')} · ${formatMetric(auction.cargo.volume, 'м³')}`}
               />
+              <DetailItem term="Габариты груза" value={formatCargoDimensions(auction.cargo)} />
+              <DetailItem
+                term="Упаковка"
+                value={
+                  auction.cargo.packageName === null && auction.cargo.packageAmount === null
+                    ? 'Не указана'
+                    : `${auction.cargo.packageName ?? 'Тип не указан'}, ${auction.cargo.packageAmount ?? '—'} шт.`
+                }
+              />
               <DetailItem term="Кузов" value={auction.cargo.bodyType ?? 'Не указан'} />
               <DetailItem
                 term="Транспорт"
-                value={`${auction.cargo.truckType ?? 'Не указан'}, ${auction.cargo.truckCount ?? '—'} шт.`}
+                value={`${auction.cargo.vehicle?.type ?? 'Не указан'}, ${auction.cargo.truckCount ?? '—'} шт.`}
               />
+              <DetailItem
+                term="Вместимость ТС"
+                value={`${formatMetric(auction.cargo.vehicle?.weight ?? null, 'т')} · ${formatMetric(auction.cargo.vehicle?.volume ?? null, 'м³')}`}
+              />
+              <DetailItem term="Габариты ТС" value={formatVehicleDimensions(auction.cargo)} />
               <DetailItem term="Расстояние" value={formatMetric(auction.cargo.distance, 'км')} />
+              <DetailItem term="Температура" value={formatTemperatureRange(auction.cargo)} />
+              <DetailItem
+                term="Способы загрузки"
+                value={formatLoadingTypes(auction.cargo.loadingTypes)}
+              />
+              <DetailItem
+                term="Документы"
+                value={formatRequiredDocuments(auction.cargo.documents)}
+              />
             </dl>
+            {additionalRequirements.length > 0 ? (
+              <div className="flex flex-wrap gap-2" aria-label="Дополнительные требования">
+                {additionalRequirements.map((requirement) => (
+                  <Badge
+                    key={requirement}
+                    variant="outline"
+                    className="h-auto max-w-full whitespace-normal bg-muted/50 text-left text-foreground"
+                  >
+                    {requirement}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
             {auction.cargo.isInternational ? (
               <Badge variant="outline" className="w-fit border-blue-100 bg-blue-50 text-blue-700">
                 Международная перевозка
@@ -227,7 +272,7 @@ export function AuctionDetail({ auction, onSetBid }: TAuctionDetailProps) {
                           contact.phone ? (
                             <a
                               href={`tel:${contact.phone}`}
-                              className="inline-flex items-center gap-2 text-blue-600 underline-offset-4 hover:underline"
+                              className="inline-flex max-w-full items-center gap-2 break-all text-blue-600 underline-offset-4 hover:underline"
                             >
                               {contact.phone}
                               <PhoneIcon className="size-4" aria-hidden="true" />
@@ -243,7 +288,7 @@ export function AuctionDetail({ auction, onSetBid }: TAuctionDetailProps) {
                           contact.email ? (
                             <a
                               href={`mailto:${contact.email}`}
-                              className="inline-flex items-center gap-2 text-blue-600 underline-offset-4 hover:underline"
+                              className="inline-flex max-w-full items-center gap-2 break-all text-blue-600 underline-offset-4 hover:underline"
                             >
                               {contact.email}
                               <MailIcon className="size-4" aria-hidden="true" />

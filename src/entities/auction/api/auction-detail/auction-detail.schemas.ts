@@ -2,13 +2,15 @@ import { z } from 'zod';
 import {
   auctionStatusSchema,
   auctionTypeSchema,
+  auctionUuidSchema,
   bidMeasurementTypeSchema,
+  openApiDateTimeSchema,
   operationTypeSchema,
   paymentDelayTypeSchema,
   tradingStatusSchema,
 } from '../auction-common/auction-common.schemas';
 
-export const auctionUuidSchema = z.uuid();
+export { auctionUuidSchema } from '../auction-common/auction-common.schemas';
 
 const contactSchema = z.object({
   name: z.string().nullable().optional(),
@@ -46,8 +48,8 @@ const carRequirementsSchema = z
 const routePointSchema = z.object({
   row_num: z.number().int().optional(),
   op_type: operationTypeSchema.optional(),
-  start_date: z.string().optional(),
-  end_date: z.string().optional(),
+  start_date: openApiDateTimeSchema.optional(),
+  end_date: openApiDateTimeSchema.optional(),
   comment: z.string().nullable().optional(),
   contractor: z.string().optional(),
   contractor_inn: z.string().optional(),
@@ -102,10 +104,10 @@ const admittedOrganizationSchema = z.object({
 const auctionShowMainSchema = z.object({
   id: z.number().int().optional(),
   cargo_num: z.string().optional(),
-  cargo_date: z.string().optional(),
+  cargo_date: openApiDateTimeSchema.optional(),
   order_uid: auctionUuidSchema.optional(),
   auc_type: auctionTypeSchema.optional(),
-  created_at: z.string().optional(),
+  created_at: openApiDateTimeSchema.optional(),
 });
 
 const auctionShowOrganizerSchema = z.object({
@@ -145,8 +147,8 @@ const auctionShowCargoSchema = z.object({
 const auctionShowTradingSchema = z.object({
   status: auctionStatusSchema.optional(),
   status_mobile: tradingStatusSchema.optional(),
-  start_time: z.string().optional(),
-  stop_time: z.string().optional(),
+  start_time: openApiDateTimeSchema.optional(),
+  stop_time: openApiDateTimeSchema.optional(),
   bid_measurement_type: bidMeasurementTypeSchema.optional(),
   can_set_bet: z.boolean().optional(),
   allow_counter_bets: z.boolean().optional(),
@@ -216,7 +218,7 @@ export const auctionDetailResponseSchema = z.object({
   payment: auctionShowPaymentSchema,
   assembly: z.object({
     num: z.string().nullable().optional(),
-    date: z.string().nullable().optional(),
+    date: openApiDateTimeSchema.nullable().optional(),
   }),
   routes: z.array(routePointSchema),
   admitted_organizations: z.array(admittedOrganizationSchema),
@@ -225,7 +227,7 @@ export const auctionDetailResponseSchema = z.object({
 
 const betItemSchema = z.object({
   id: z.number().int().optional(),
-  created_at: z.string().optional(),
+  created_at: openApiDateTimeSchema.optional(),
   auction_id: z.number().int().optional(),
   subscriber_id: z.number().int().optional(),
   contact_name: z.string().optional(),

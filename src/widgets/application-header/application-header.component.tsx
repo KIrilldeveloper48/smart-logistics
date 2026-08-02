@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router';
-import { ChevronDownIcon } from 'lucide-react';
 
 export function ApplicationHeader() {
   return (
@@ -21,7 +20,6 @@ export function ApplicationHeader() {
         <div className="hidden items-center gap-3 text-sm text-muted-foreground sm:flex">
           <span className="size-1.5 rounded-full bg-blue-600" aria-hidden="true" />
           <span>Рабочее место перевозчика</span>
-          <ChevronDownIcon className="size-4" aria-hidden="true" />
         </div>
       </div>
     </header>

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { formatPrice } from '@/entities/auction';
 import {
@@ -14,28 +15,46 @@ import {
 import {
   createAuctionBidFormSchema,
   getAuctionBidApiErrorMessage,
+  getAuctionBidPriceErrorMessage,
   getAuctionBidDefaultValues,
   useSetAuctionBidMutation,
 } from '../model';
 import type { TAuctionBidFormValues } from '../model';
 import type { TAuctionBidFormProps } from './auction-bid-form.types';
 
-export function AuctionBidForm({ auction, isOpen, onOpenChange, onSuccess }: TAuctionBidFormProps) {
-  const constraints = {
-    auctionType: auction.auctionType,
-    canSetBid: auction.canSetBid,
-    price: auction.price,
-  };
+export function AuctionBidForm({
+  auction,
+  isOpen,
+  onOpenChange,
+  onSuccess,
+  onError,
+}: TAuctionBidFormProps) {
+  const constraints = useMemo(
+    () => ({
+      auctionType: auction.auctionType,
+      canSetBid: auction.canSetBid,
+      price: auction.price,
+    }),
+    [auction.auctionType, auction.canSetBid, auction.price],
+  );
   const form = useForm<TAuctionBidFormValues>({
     resolver: zodResolver(createAuctionBidFormSchema(constraints)),
     defaultValues: getAuctionBidDefaultValues(constraints),
   });
   const bidMutation = useSetAuctionBidMutation();
+  const resetBidMutation = bidMutation.reset;
   const priceError = form.formState.errors.price?.message;
+
+  useEffect(() => {
+    if (isOpen) {
+      form.reset(getAuctionBidDefaultValues(constraints));
+      resetBidMutation();
+    }
+  }, [constraints, form, isOpen, resetBidMutation]);
 
   const handleOpenChange = (nextIsOpen: boolean): void => {
     if (!nextIsOpen) {
-      form.reset(getAuctionBidDefaultValues(constraints));
+      form.clearErrors();
       bidMutation.reset();
     }
 
@@ -48,12 +67,19 @@ export function AuctionBidForm({ auction, isOpen, onOpenChange, onSuccess }: TAu
       onSuccess();
       handleOpenChange(false);
     } catch (error) {
-      form.setError('price', { message: getAuctionBidApiErrorMessage(error) });
+      const priceErrorMessage = getAuctionBidPriceErrorMessage(error);
+
+      if (priceErrorMessage !== null) {
+        form.setError('price', { message: priceErrorMessage });
+        return;
+      }
+
+      onError(getAuctionBidApiErrorMessage(error));
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen && auction.canSetBid} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{auction.hasMyBid ? 'Изменить ставку' : 'Сделать ставку'}</DialogTitle>
@@ -107,7 +133,10 @@ export function AuctionBidForm({ auction, isOpen, onOpenChange, onSuccess }: TAu
             >
               Отмена
             </Button>
-            <Button type="submit" disabled={bidMutation.isPending || auction.auctionUuid === null}>
+            <Button
+              type="submit"
+              disabled={bidMutation.isPending || auction.auctionUuid === null || !auction.canSetBid}
+            >
               {bidMutation.isPending ? 'Отправка…' : 'Отправить ставку'}
             </Button>
           </DialogFooter>

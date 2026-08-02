@@ -29,7 +29,15 @@ describe('auction view-model mappers', () => {
       main: {},
       organizer: {},
       contacts: [{ name: 'Иван Иванов', phone: '+79000000000' }],
-      cargo: {},
+      cargo: {
+        body_type: 'Рефрижератор',
+        temp_from: -18,
+        temp_to: -12,
+        belts: 8,
+        loading_types: { side: true, rear: true },
+        docs: { cmr: true },
+        car: { type: 'Тягач', weight: 20, volume: 82, length: 13.6, width: 2.45 },
+      },
       trading: {
         hide_points_address_and_contacts: true,
         hide_bets_history: true,
@@ -41,6 +49,13 @@ describe('auction view-model mappers', () => {
         {
           op_type: 'Loading',
           location: { city_name: 'Пермь', loading_address: 'Транспортная, 9' },
+          cargo: {
+            name: 'Замороженные продукты',
+            package_name: 'Палеты',
+            package_amount: 20,
+            weight: '20',
+            volume: '82',
+          },
           contact: { name: 'Иван Иванов', phone: '+79000000000' },
         },
       ],
@@ -51,15 +66,31 @@ describe('auction view-model mappers', () => {
       contacts: [],
       routes: [{ city: 'Пермь', address: null, contactName: null, contactPhone: null }],
       price: { min: 10_000, max: 20_000, step: 500 },
+      cargo: {
+        name: 'Замороженные продукты',
+        packageName: 'Палеты',
+        packageAmount: 20,
+        temperatureFrom: -18,
+        temperatureTo: -12,
+        belts: 8,
+        loadingTypes: ['Side', 'Rear'],
+        documents: ['Cmr'],
+        vehicle: { type: 'Тягач', weight: 20, volume: 82, length: 13.6, width: 2.45 },
+      },
       isBetsHistoryHidden: true,
     });
   });
 
   it('maps empty string cancellation reasons to null for the UI', () => {
-    const bet: TBetItem = { organization_name: 'ООО Перевозчик', cancel_reason: '' };
+    const bet: TBetItem = {
+      organization_id: 42,
+      organization_name: 'ООО Перевозчик',
+      cancel_reason: '',
+    };
 
     expect(toBetViewModel(bet)).toMatchObject({
       transporterName: 'ООО Перевозчик',
+      organizationId: 42,
       cancelReason: null,
       isWinner: false,
       isRejected: false,

@@ -1,6 +1,8 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import {
   AuctionListCard,
+  type TAuctionListPrimaryAction,
   type TAuctionListItemViewModel,
   toAuctionListViewModels,
   useAuctionDetailPrefetch,
@@ -8,7 +10,11 @@ import {
 } from '@/entities/auction';
 import { AuctionListFiltersPanel, type TAuctionListFilters } from '@/features/auction-list-filters';
 import { Badge } from '@/shared/ui';
-import { auctionsListSearchSchema, toAuctionListRequestFromSearch } from './model';
+import {
+  auctionsListSearchSchema,
+  getAuctionListCorrectedPage,
+  toAuctionListRequestFromSearch,
+} from './model';
 import {
   AuctionListEmptyState,
   AuctionListErrorState,
@@ -18,6 +24,7 @@ import {
 
 export function AuctionsListPage() {
   const navigate = useNavigate({ from: '/' });
+  const location = useLocation();
   const rawSearch = useSearch({ strict: false });
   const search = auctionsListSearchSchema.parse(rawSearch);
   const request = toAuctionListRequestFromSearch(search);
@@ -26,6 +33,19 @@ export function AuctionsListPage() {
   const auctions = toAuctionListViewModels(auctionListQuery.data?.data ?? []);
   const currentPage = auctionListQuery.data?.meta?.current_page ?? search.page;
   const lastPage = auctionListQuery.data?.meta?.last_page ?? 1;
+  const total = auctionListQuery.data?.meta?.total ?? 0;
+  const correctedPage = auctionListQuery.isSuccess
+    ? getAuctionListCorrectedPage(search.page, lastPage, total)
+    : null;
+
+  useEffect(() => {
+    if (correctedPage !== null) {
+      void navigate({
+        search: (previous) => ({ ...previous, page: correctedPage }),
+        replace: true,
+      });
+    }
+  }, [correctedPage, navigate]);
 
   const handlePageChange = (page: number): void => {
     void navigate({
@@ -37,19 +57,35 @@ export function AuctionsListPage() {
     void navigate({
       to: '/auctions/$auctionUuid',
       params: { auctionUuid },
+      search: { returnTo: location.href },
     });
   };
 
-  const handlePlaceBid = (auction: TAuctionListItemViewModel): void => {
+  const handlePrimaryAction = (
+    auction: TAuctionListItemViewModel,
+    action: TAuctionListPrimaryAction,
+  ): void => {
     if (auction.auctionUuid === null) {
       return;
     }
 
-    void navigate({
-      to: '/auctions/$auctionUuid',
-      params: { auctionUuid: auction.auctionUuid },
-      search: { mode: 'bid' },
-    });
+    if (action.kind === 'bets') {
+      void navigate({
+        to: '/auctions/$auctionUuid',
+        params: { auctionUuid: auction.auctionUuid },
+        search: { returnTo: location.href },
+        hash: 'auction-bets',
+      });
+      return;
+    }
+
+    if (action.kind === 'bid') {
+      void navigate({
+        to: '/auctions/$auctionUuid',
+        params: { auctionUuid: auction.auctionUuid },
+        search: { mode: 'bid', returnTo: location.href },
+      });
+    }
   };
 
   const handleFiltersApply = (filters: TAuctionListFilters): void => {
@@ -81,6 +117,10 @@ export function AuctionsListPage() {
       return <AuctionListErrorState onRetry={() => void auctionListQuery.refetch()} />;
     }
 
+    if (correctedPage !== null) {
+      return <AuctionListSkeleton />;
+    }
+
     if (auctions.length === 0) {
       return <AuctionListEmptyState />;
     }
@@ -94,7 +134,7 @@ export function AuctionsListPage() {
               auction={auction}
               onIntent={prefetchAuctionDetail}
               onOpenDetails={handleOpenDetails}
-              onPrimaryAction={handlePlaceBid}
+              onPrimaryAction={handlePrimaryAction}
             />
           ))}
         </div>

@@ -14,6 +14,13 @@ export default defineConfig({
       '@': path.resolve(currentDirectory, './src'),
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: true,
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: false,

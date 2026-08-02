@@ -2,34 +2,14 @@ import type { TAuctionDetailResponse, TAuctionListItem, TBetItem } from '../../a
 import type {
   TAuctionDetailViewModel,
   TAuctionListItemViewModel,
-  TAuctionPriceSource,
-  TAuctionPriceSummary,
-  TAuctionRouteSummary,
-  TAuctionRouteViewModel,
   TBetViewModel,
 } from './auction-view-model.types';
-
-const toRouteSummary = (
-  point: Readonly<NonNullable<TAuctionListItem['route']>['load']> | undefined,
-): TAuctionRouteSummary => ({
-  city: point?.city ?? null,
-  address: point?.address ?? null,
-  date: point?.date ?? null,
-  pointsCount: point?.points_count ?? null,
-});
-
-const toPriceSummary = (
-  price: TAuctionPriceSource | null | undefined,
-  pricePerKm?: number | null | undefined,
-): TAuctionPriceSummary => ({
-  current: price?.current ?? null,
-  currentWithoutVat: price?.current_no_vat ?? null,
-  pricePerKm: pricePerKm ?? null,
-  available: price?.available ?? null,
-  min: price?.min ?? null,
-  max: price?.max ?? null,
-  step: price?.step ?? null,
-});
+import {
+  toDetailCargoViewModel,
+  toPriceSummary,
+  toRouteSummary,
+  toRouteViewModel,
+} from './auction-view-model.helpers';
 
 export const toAuctionListItemViewModel = (
   item: Readonly<TAuctionListItem>,
@@ -59,20 +39,6 @@ export const toAuctionListViewModels = (
   items: readonly TAuctionListItem[],
 ): readonly TAuctionListItemViewModel[] => items.map(toAuctionListItemViewModel);
 
-const toRouteViewModel = (
-  route: Readonly<TAuctionDetailResponse['routes'][number]>,
-  areRouteDetailsHidden: boolean,
-): TAuctionRouteViewModel => ({
-  sequence: route.row_num ?? null,
-  operationType: route.op_type ?? 'Unknown',
-  city: route.location?.city_name ?? null,
-  address: areRouteDetailsHidden ? null : (route.location?.loading_address ?? null),
-  startDate: route.start_date ?? null,
-  endDate: route.end_date ?? null,
-  contactName: areRouteDetailsHidden ? null : (route.contact?.name ?? null),
-  contactPhone: areRouteDetailsHidden ? null : (route.contact?.phone ?? null),
-});
-
 export const toAuctionDetailViewModel = (
   auction: Readonly<TAuctionDetailResponse>,
 ): TAuctionDetailViewModel => {
@@ -100,16 +66,7 @@ export const toAuctionDetailViewModel = (
           email: contact.email ?? null,
         })),
     routes: auction.routes.map((route) => toRouteViewModel(route, areRouteDetailsHidden)),
-    cargo: {
-      name: auction.routes[0]?.cargo?.name ?? null,
-      weight: auction.routes[0]?.cargo?.weight ?? null,
-      volume: auction.routes[0]?.cargo?.volume ?? null,
-      bodyType: auction.cargo.body_type ?? null,
-      truckCount: auction.cargo.truck_count ?? null,
-      distance: auction.cargo.distance ?? null,
-      isInternational: auction.cargo.is_international ?? false,
-      truckType: auction.cargo.car?.type ?? null,
-    },
+    cargo: toDetailCargoViewModel(auction),
     payment: {
       form: auction.payment.form ?? null,
       delay: auction.payment.delay ?? null,
@@ -129,6 +86,7 @@ export const toAuctionDetailViewModel = (
 
 export const toBetViewModel = (bet: Readonly<TBetItem>): TBetViewModel => ({
   id: bet.id ?? null,
+  organizationId: bet.organization_id ?? null,
   createdAt: bet.created_at ?? null,
   transporterName: bet.organization_name ?? null,
   priceWithVat: bet.price_with_vat ?? null,

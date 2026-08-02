@@ -11,6 +11,3 @@ export * from './auction-list/auction-list-request.types';
 export * from './auction-list/auction-list-search.schema';
 export * from './auction-list/auction-list.schemas';
 export * from './auction-list/auction-list.types';
-export * from './mocks/auction-bid/auction-bid.handler';
-export * from './mocks/auction-mock-store/auction-mock-store';
-export * from './mocks/auction-read/auction-read.handlers';

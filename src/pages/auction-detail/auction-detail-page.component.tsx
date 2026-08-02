@@ -1,6 +1,6 @@
-import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useLocation, useNavigate, useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AuctionApiError,
   AuctionBetsHistory,
@@ -11,30 +11,66 @@ import {
   useAuctionDetailQuery,
 } from '@/entities/auction';
 import { AuctionBidForm } from '@/features/set-auction-bid';
-import { Button } from '@/shared/ui';
+import { Button, Toast } from '@/shared/ui';
 import { AuctionDetailErrorState, AuctionDetailNotFoundState, AuctionDetailSkeleton } from './ui';
+import type { TAuctionDetailNotification } from './auction-detail-page.types';
 
 export function AuctionDetailPage() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' });
   const navigate = useNavigate({ from: '/auctions/$auctionUuid' });
+  const router = useRouter();
+  const location = useLocation();
   const search = useSearch({ from: '/auctions/$auctionUuid' });
-  const [isBidSuccessVisible, setIsBidSuccessVisible] = useState(false);
+  const [notification, setNotification] = useState<TAuctionDetailNotification | null>(null);
   const auctionDetailQuery = useAuctionDetailQuery(auctionUuid);
-  const auction = auctionDetailQuery.data
-    ? toAuctionDetailViewModel(auctionDetailQuery.data)
-    : null;
+  const auction = useMemo(
+    () => (auctionDetailQuery.data ? toAuctionDetailViewModel(auctionDetailQuery.data) : null),
+    [auctionDetailQuery.data],
+  );
   const auctionBetsQuery = useAuctionBetsQuery(
     auctionUuid,
     auction !== null && !auction.isBetsHistoryHidden,
   );
+  const isUnavailableBidMode = auction !== null && search.mode === 'bid' && !auction.canSetBid;
+  const visibleNotification =
+    notification ??
+    (isUnavailableBidMode
+      ? { variant: 'error' as const, message: 'Ставка для этого аукциона недоступна.' }
+      : null);
 
   const handleBidModeChange = (isOpen: boolean): void => {
-    if (isOpen) {
-      setIsBidSuccessVisible(false);
+    void navigate({
+      search: (previous) => ({ ...previous, mode: isOpen ? 'bid' : undefined }),
+    });
+  };
+
+  const handleNotificationOpenChange = useCallback(
+    (isOpen: boolean): void => {
+      if (!isOpen) {
+        setNotification(null);
+
+        if (isUnavailableBidMode) {
+          void navigate({
+            search: (previous) => ({ ...previous, mode: undefined }),
+            replace: true,
+          });
+        }
+      }
+    },
+    [isUnavailableBidMode, navigate],
+  );
+
+  useEffect(() => {
+    if (auction === null || location.hash.replace(/^#/, '') !== 'auction-bets') {
+      return undefined;
     }
 
-    void navigate({ search: isOpen ? { mode: 'bid' } : {} });
-  };
+    const frameId = window.requestAnimationFrame(() => {
+      document.getElementById('auction-bets')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [auction, location.hash]);
 
   const content = (() => {
     if (auctionDetailQuery.isPending) {
@@ -61,18 +97,16 @@ export function AuctionDetailPage() {
         <AuctionDetail auction={auction} onSetBid={() => handleBidModeChange(true)} />
         <AuctionBidForm
           auction={auction}
-          isOpen={search.mode === 'bid'}
+          isOpen={search.mode === 'bid' && auction.canSetBid}
           onOpenChange={handleBidModeChange}
-          onSuccess={() => setIsBidSuccessVisible(true)}
+          onSuccess={() =>
+            setNotification({
+              variant: 'success',
+              message: 'Ставка успешно отправлена. Данные аукциона обновлены.',
+            })
+          }
+          onError={(message) => setNotification({ variant: 'error', message })}
         />
-        {isBidSuccessVisible ? (
-          <p
-            className="mt-5 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-700"
-            role="status"
-          >
-            Ставка успешно отправлена. Данные аукциона обновлены.
-          </p>
-        ) : null}
         <div className="mt-5">
           <AuctionBetsHistory
             bets={toBetViewModels(auctionBetsQuery.data?.bets ?? [])}
@@ -89,13 +123,22 @@ export function AuctionDetailPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-      <Button asChild variant="outline" className="w-fit">
-        <Link to="/" search={{ page: 1, perPage: 20 }}>
-          <ArrowLeftIcon aria-hidden="true" />К списку аукционов
-        </Link>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-fit"
+        onClick={() => router.history.push(search.returnTo ?? '/')}
+      >
+        <ArrowLeftIcon aria-hidden="true" />К списку аукционов
       </Button>
       <h1 className="mt-6 text-2xl font-semibold tracking-tight sm:text-3xl">Детали аукциона</h1>
       {content}
+      <Toast
+        isOpen={visibleNotification !== null}
+        message={visibleNotification?.message ?? ''}
+        variant={visibleNotification?.variant ?? 'success'}
+        onOpenChange={handleNotificationOpenChange}
+      />
     </main>
   );
 }

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const auctionUuidSchema = z.uuid();
+
+export const openApiDateTimeSchema = z.iso.datetime({ local: true, offset: true });
+
 export const auctionStatusSchema = z.enum([
   'Planning',
   'Auction',

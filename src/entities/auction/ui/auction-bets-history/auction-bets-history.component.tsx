@@ -1,6 +1,10 @@
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/ui';
 import { Clock3Icon } from 'lucide-react';
 import { formatDate, formatPrice } from '../auction-presentation';
+import {
+  formatParticipantsCount,
+  getAuctionParticipantsCount,
+} from './auction-bets-history.helpers';
 import type { TAuctionBetsHistoryProps } from './auction-bets-history.types';
 
 export function AuctionBetsHistory({
@@ -11,6 +15,7 @@ export function AuctionBetsHistory({
   isError,
   onRetry,
 }: TAuctionBetsHistoryProps) {
+  const participantsCount = getAuctionParticipantsCount(bets);
   const renderContent = () => {
     if (isHidden) {
       return <p className="text-sm text-muted-foreground">История ставок скрыта организатором.</p>;
@@ -88,10 +93,15 @@ export function AuctionBetsHistory({
   };
 
   return (
-    <Card>
-      <CardHeader className="flex-row items-center gap-3">
+    <Card id="auction-bets" className="scroll-mt-6">
+      <CardHeader className="flex-row flex-wrap items-center gap-3">
         <Clock3Icon className="size-5 text-muted-foreground" aria-hidden="true" />
         <CardTitle>История ставок</CardTitle>
+        {!isHidden && !isPending && !isError ? (
+          <Badge variant="outline" className="ml-auto bg-muted/50 text-foreground">
+            {formatParticipantsCount(participantsCount)}
+          </Badge>
+        ) : null}
       </CardHeader>
       <CardContent>{renderContent()}</CardContent>
     </Card>

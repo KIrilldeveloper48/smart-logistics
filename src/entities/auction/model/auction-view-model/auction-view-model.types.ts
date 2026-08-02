@@ -103,13 +103,46 @@ export type TAuctionRouteViewModel = Readonly<{
 
 export type TAuctionDetailCargoViewModel = Readonly<{
   name: TNullable<string>;
+  packageName: TNullable<string>;
+  packageAmount: TNullable<number>;
   weight: TNullable<string>;
   volume: TNullable<string>;
+  length: TNullable<string>;
+  width: TNullable<string>;
+  height: TNullable<string>;
+  isOversized: boolean;
   bodyType: TNullable<string>;
   truckCount: TNullable<number>;
   distance: TNullable<number>;
   isInternational: boolean;
-  truckType: TNullable<string>;
+  temperatureFrom: TNullable<number>;
+  temperatureTo: TNullable<number>;
+  conics: TNullable<number>;
+  belts: TNullable<number>;
+  adr: TNullable<number>;
+  coupling: boolean;
+  airPass: boolean;
+  lowLoader: boolean;
+  additionalLoad: boolean;
+  isContainerized: boolean;
+  containerType: TNullable<string>;
+  containerSize: TNullable<string>;
+  loadingTypes: readonly TAuctionLoadingType[];
+  documents: readonly TAuctionDocumentType[];
+  vehicle: TNullable<TAuctionVehicleRequirementsViewModel>;
+}>;
+
+export type TAuctionLoadingType = 'Side' | 'Top' | 'Rear' | 'Full';
+
+export type TAuctionDocumentType = 'Tir' | 'Cmr' | 'T1' | 'MedicalBook';
+
+export type TAuctionVehicleRequirementsViewModel = Readonly<{
+  type: TNullable<string>;
+  weight: TNullable<number>;
+  volume: TNullable<number>;
+  width: TNullable<number>;
+  length: TNullable<number>;
+  height: TNullable<number>;
 }>;
 
 export type TAuctionPaymentViewModel = Readonly<{
@@ -121,6 +154,7 @@ export type TAuctionPaymentViewModel = Readonly<{
 
 export type TBetViewModel = Readonly<{
   id: TNullable<number>;
+  organizationId: TNullable<number>;
   createdAt: TNullable<string>;
   transporterName: TNullable<string>;
   priceWithVat: TNullable<number>;

@@ -1,2 +1,2 @@
-export { AuctionsListPage } from './auctions-list-page.component';
+export { AuctionsListPage } from './auctions-list-page-lazy.component';
 export { auctionsListSearchSchema } from './model';

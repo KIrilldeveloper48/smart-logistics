@@ -8,3 +8,4 @@ export * from './sheet.component';
 export * from './skeleton.component';
 export * from './tabs.component';
 export * from './tooltip.component';
+export * from './toast';

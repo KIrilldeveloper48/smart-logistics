@@ -7,7 +7,7 @@ export function DetailItem({ term, value, icon }: TDetailItemProps) {
         {icon}
         {term}
       </dt>
-      <dd className="min-w-0">{value}</dd>
+      <dd className="min-w-0 break-words">{value}</dd>
     </div>
   );
 }
