@@ -77,5 +77,5 @@ npm run build
 - [Правила разработки](./docs/DEVELOPMENT_GUIDELINES.md)
 - [Общий план работ](./docs/WORK_PLAN.md)
 - [План тестирования](./docs/TEST_PLAN.md)
-- [План финальной вехи](./docs/MILESTONE_5_COMMITS.md)
+- [Пример декомпозиции вехи на коммиты](./docs/MILESTONE_4_COMMITS.md)
 - [Использование AI](./docs/AI_USAGE.md)
